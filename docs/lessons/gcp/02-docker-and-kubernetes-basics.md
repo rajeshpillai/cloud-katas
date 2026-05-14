@@ -91,15 +91,17 @@ docker history cloud-katas-sample:v1 --no-trunc | head -20
 Inspect what the runtime image carries.
 
 ```bash
-# Image size
-docker image inspect cloud-katas-sample:v1 --format '{{.Size}}' | numfmt --to=iec
+# Image size in bytes (Docker prints raw bytes; on Linux, pipe through `numfmt --to=iec` if you want a human-readable size)
+docker image inspect cloud-katas-sample:v1 --format '{{.Size}}'
 
-# Confirm non-root and tini
+# Non-root user: command runs after the tini entrypoint, so `id` reports the runtime UID/GID
 docker run --rm cloud-katas-sample:v1 id
-docker run --rm --entrypoint sh cloud-katas-sample:v1 -c 'cat /proc/1/comm'
+
+# Tini as PID 1: do NOT override the entrypoint, otherwise PID 1 becomes the new command
+docker run --rm cloud-katas-sample:v1 sh -c 'cat /proc/1/comm'
 ```
 
-`id` should print `uid=... (app) gid=... (app)`; `/proc/1/comm` should print `tini`.
+`id` should print `uid=65532(app) gid=65532(app)`. `/proc/1/comm` should print `tini`.
 
 Run the container locally to confirm it serves traffic before involving Kubernetes.
 
@@ -271,7 +273,7 @@ spec:
         - name: secret-volume
           secret:
             secretName: sample-secret
-            defaultMode: 0400
+            defaultMode: 0440
         - name: tmp
           emptyDir: {}
 ```

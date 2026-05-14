@@ -23,13 +23,14 @@ RUN /opt/venv/bin/python -m compileall -q .
 FROM python:${PYTHON_VERSION}-alpine${ALPINE_VERSION} AS runtime
 
 RUN apk add --no-cache tini \
-    && addgroup -S app \
-    && adduser -S -G app -h /app -s /sbin/nologin app
+    && addgroup -g 65532 -S app \
+    && adduser -u 65532 -G app -S -h /app -s /sbin/nologin app
 
 WORKDIR /app
 
 COPY --from=build --chown=app:app /opt/venv /opt/venv
-COPY --from=build --chown=app:app /build/app.py /build/__pycache__ /app/
+COPY --from=build --chown=app:app /build/app.py /app/app.py
+COPY --from=build --chown=app:app /build/__pycache__ /app/__pycache__
 
 ENV PATH=/opt/venv/bin:$PATH \
     PYTHONDONTWRITEBYTECODE=1 \
