@@ -1,16 +1,20 @@
-const lessonFiles = import.meta.glob("../../../docs/lessons/**/*.md", {
-  query: "?raw",
+const lessonUrls = import.meta.glob("../../../docs/lessons/**/*.md", {
+  query: "?url",
   import: "default",
-}) as Record<string, () => Promise<string>>;
+  eager: true,
+}) as Record<string, string>;
 
-const lessonLoadersByPath = Object.fromEntries(
-  Object.entries(lessonFiles).map(([path, loader]) => {
+const lessonUrlByPath = Object.fromEntries(
+  Object.entries(lessonUrls).map(([path, url]) => {
     const normalizedPath = path.replace("../../../", "");
-    return [normalizedPath, loader];
+    return [normalizedPath, url];
   }),
-) as Record<string, () => Promise<string>>;
+) as Record<string, string>;
 
-export async function loadLessonContent(path: string) {
-  const loader = lessonLoadersByPath[path];
-  return loader ? loader() : "";
+export async function loadLessonContent(path: string): Promise<string> {
+  const url = lessonUrlByPath[path];
+  if (!url) return "";
+  const response = await fetch(url);
+  if (!response.ok) return "";
+  return response.text();
 }
