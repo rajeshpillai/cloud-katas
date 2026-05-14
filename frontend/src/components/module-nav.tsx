@@ -1,4 +1,4 @@
-import type { Module, Provider } from "../data/modules";
+import type { Module } from "../data/modules";
 import { ModuleCard } from "./module-card";
 
 type ModuleNavProps = {
@@ -9,20 +9,23 @@ type ModuleNavProps = {
   onSelect: (slug: string) => void;
 };
 
-const labels: Record<Provider, string> = {
-  gcp: "Google Cloud",
-  shared: "Shared Foundations",
-  aws: "Amazon Web Services",
-};
+const sections = [
+  { key: "gcp-sequence", label: "GCP Sequence", includes: (module: Module) => module.id <= 10 },
+  { key: "aws-sequence", label: "AWS Sequence", includes: (module: Module) => module.id >= 11 },
+];
 
 export function ModuleNav({ modules, activeSlug, completed, isLocked, onSelect }: ModuleNavProps) {
   return (
     <nav className="module-nav" aria-label="Learning modules">
-      {(["gcp", "shared", "aws"] as Provider[]).map((provider) => {
-        const group = modules.filter((module) => module.provider === provider);
+      {sections.map((section) => {
+        const group = modules.filter(section.includes);
+        if (group.length === 0) {
+          return null;
+        }
+
         return (
-          <section key={provider}>
-            <h2>{labels[provider]}</h2>
+          <section key={section.key}>
+            <h2>{section.label}</h2>
             <div className="module-stack">
               {group.map((module) => (
                 <ModuleCard
