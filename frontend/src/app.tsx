@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { BookOpen, CheckCircle2, Moon, PanelLeftClose, PanelLeftOpen, RotateCcw, Search, ShieldCheck, Sun } from "lucide-react";
+import { BookOpen, CheckCircle2, Github, Moon, PanelLeftClose, PanelLeftOpen, RotateCcw, Search, ShieldCheck, Star, Sun } from "lucide-react";
 import { Link, Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { MermaidDiagram } from "./components/mermaid-diagram";
 import { LessonContent } from "./components/lesson-content";
@@ -182,6 +182,18 @@ function LearningPortal() {
 
       <section className="content">
         <div className="top-actions">
+          <a
+            className="github-link"
+            href="https://github.com/rajeshpillai/cloud-katas"
+            target="_blank"
+            rel="noreferrer noopener"
+            aria-label="Star Cloud Katas on GitHub"
+            title="Star on GitHub"
+          >
+            <Github size={18} />
+            <Star size={14} />
+            <span>Star on GitHub</span>
+          </a>
           <button
             className="theme-toggle"
             type="button"
