@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc --noEmit && vite build",
+    "build:pages": "tsc --noEmit && VITE_BASE=/cloud-katas/ vite build",
     "preview": "vite preview --host 0.0.0.0",
+    "deploy:pages": "bash ../scripts/deploy-pages.sh",
     "test:smoke": "playwright test"
   },
   "dependencies": {
