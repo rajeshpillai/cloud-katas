@@ -268,21 +268,29 @@ kubectl rollout restart deployment/sample
 kubectl rollout status deployment/sample
 ```
 
-Validate the token exchange from inside a pod.
+Validate the token exchange. Two checks: first confirm IRSA's webhook injected the env vars and token volume into the running pod (`apk add` would fail because the hardened image has a read-only root filesystem). Then launch a one-shot pod that uses the *same* `ServiceAccount` so the webhook injects IRSA into it too — that pod has `aws-cli` and can call STS directly.
 
 ```bash
 POD=$(kubectl get pod -l app.kubernetes.io/name=sample -o jsonpath='{.items[0].metadata.name}')
 
+# 1) IRSA env + projected token volume on the running pod
 kubectl exec "$POD" -- sh -c '
-  apk add --no-cache aws-cli >/dev/null 2>&1 || true
   echo "Token file: $AWS_WEB_IDENTITY_TOKEN_FILE"
   echo "Role ARN:   $AWS_ROLE_ARN"
-  aws sts get-caller-identity 2>&1 | head -10 || \
-    echo "aws CLI not available in image; show env shows the projection worked"
+  ls -l "$AWS_WEB_IDENTITY_TOKEN_FILE"
 '
+
+# 2) Real token exchange from a one-shot pod using the same ServiceAccount.
+#    The IRSA webhook only injects creds into pods using an annotated KSA, so
+#    a kubectl debug sidecar would NOT inherit them — kubectl run does, because
+#    the new pod uses the annotated 'sample' SA.
+kubectl run irsa-check --rm -it --restart=Never \
+  --image=public.ecr.aws/aws-cli/aws-cli:latest \
+  --overrides='{"spec":{"serviceAccountName":"sample"}}' \
+  -- sts get-caller-identity
 ```
 
-The output shows `AWS_WEB_IDENTITY_TOKEN_FILE` pointing at a projected token and `AWS_ROLE_ARN` matching the role. That is IRSA at work.
+The env check shows `AWS_WEB_IDENTITY_TOKEN_FILE` pointing at a projected token and `AWS_ROLE_ARN` matching the role. The `sts get-caller-identity` call returns an `assumed-role/sample-irsa/...` ARN, proving the exchange works end-to-end.
 
 ### 6. Inspect Managed Addons
 

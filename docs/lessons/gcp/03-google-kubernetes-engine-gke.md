@@ -266,14 +266,17 @@ kubectl rollout restart deployment/sample
 kubectl rollout status deployment/sample
 ```
 
-Prove the token exchange works inside the pod.
+Prove the token exchange works inside the pod. The hardened runtime image has `readOnlyRootFilesystem: true` and no `curl`, so use Python (already in the image) to hit the metadata server.
 
 ```bash
 POD=$(kubectl get pod -l app.kubernetes.io/name=sample -o jsonpath='{.items[0].metadata.name}')
-kubectl exec "$POD" -- sh -c '
-  apk add --no-cache curl jq >/dev/null 2>&1 || true
-  curl -s -H "Metadata-Flavor: Google" \
-    http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/email
+kubectl exec "$POD" -- python -c '
+import urllib.request
+req = urllib.request.Request(
+    "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/email",
+    headers={"Metadata-Flavor": "Google"},
+)
+print(urllib.request.urlopen(req, timeout=5).read().decode())
 '
 ```
 
