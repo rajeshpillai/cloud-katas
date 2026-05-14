@@ -10,7 +10,7 @@ This lesson practices least privilege IAM, service accounts, Secret Manager, Clo
 
 ## Prerequisites
 
-- Completed [GCP Fundamentals](gcp-fundamentals.md)
+- Completed [GCP Fundamentals](01-gcp-fundamentals.md)
 - A GCP project where you can manage IAM and secrets
 
 ## Learning Objectives

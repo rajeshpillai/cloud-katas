@@ -13,7 +13,7 @@ This lesson builds a tiny container image, runs it locally, deploys it to Kubern
 - Docker or a compatible container runtime
 - `kubectl`
 - A local Kubernetes cluster such as Docker Desktop Kubernetes, kind, or minikube
-- Completed [GCP Fundamentals](gcp-fundamentals.md)
+- Completed [GCP Fundamentals](01-gcp-fundamentals.md)
 
 ## Learning Objectives
 

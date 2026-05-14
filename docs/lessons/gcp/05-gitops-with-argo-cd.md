@@ -10,7 +10,7 @@ This lesson introduces GitOps by installing Argo CD into a Kubernetes cluster an
 
 ## Prerequisites
 
-- Completed [Docker and Kubernetes Basics](docker-and-kubernetes-basics.md)
+- Completed [Docker and Kubernetes Basics](02-docker-and-kubernetes-basics.md)
 - Access to a Kubernetes cluster such as GKE, EKS, kind, or minikube
 - `kubectl`
 

@@ -10,7 +10,7 @@ This lesson uses CloudWatch, Container Insights, X-Ray, OpenTelemetry, Managed P
 
 ## Prerequisites
 
-- Completed [Amazon EKS](amazon-eks-elastic-kubernetes-service.md)
+- Completed [Amazon EKS](02-amazon-eks-elastic-kubernetes-service.md)
 - A running workload or sample application
 
 ## Learning Objectives

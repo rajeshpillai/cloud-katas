@@ -17,6 +17,27 @@ export type Module = ModuleDefinition & {
   lessonPath: string;
 };
 
+const lessonPaths: Record<string, string> = {
+  "gcp-fundamentals": "docs/lessons/gcp/01-gcp-fundamentals.md",
+  "docker-and-kubernetes-basics": "docs/lessons/gcp/02-docker-and-kubernetes-basics.md",
+  "google-kubernetes-engine-gke": "docs/lessons/gcp/03-google-kubernetes-engine-gke.md",
+  "infrastructure-as-code-with-terraform": "docs/lessons/gcp/04-infrastructure-as-code-with-terraform.md",
+  "gitops-with-argo-cd": "docs/lessons/gcp/05-gitops-with-argo-cd.md",
+  "cicd-with-gitlab": "docs/lessons/gcp/06-cicd-with-gitlab.md",
+  "security-in-gcp": "docs/lessons/gcp/07-security-in-gcp.md",
+  "networking-in-gcp": "docs/lessons/gcp/08-networking-in-gcp.md",
+  "observability-on-gcp": "docs/lessons/gcp/09-observability-on-gcp.md",
+  "debugging-and-troubleshooting": "docs/lessons/gcp/10-debugging-and-troubleshooting.md",
+  "aws-fundamentals": "docs/lessons/aws/01-aws-fundamentals.md",
+  "amazon-eks-elastic-kubernetes-service": "docs/lessons/aws/02-amazon-eks-elastic-kubernetes-service.md",
+  "infrastructure-as-code-with-terraform-on-aws": "docs/lessons/aws/03-infrastructure-as-code-with-terraform-on-aws.md",
+  "cicd-with-gitlab-on-aws": "docs/lessons/aws/04-cicd-with-gitlab-on-aws.md",
+  "security-in-aws": "docs/lessons/aws/05-security-in-aws.md",
+  "networking-in-aws": "docs/lessons/aws/06-networking-in-aws.md",
+  "observability-on-aws": "docs/lessons/aws/07-observability-on-aws.md",
+  "debugging-and-troubleshooting-on-aws": "docs/lessons/aws/08-debugging-and-troubleshooting-on-aws.md",
+};
+
 const moduleDefinitions: ModuleDefinition[] = [
   {
     id: 1,
@@ -238,7 +259,7 @@ const moduleDefinitions: ModuleDefinition[] = [
 
 export const modules: Module[] = moduleDefinitions.map((module) => ({
   ...module,
-  lessonPath: `docs/lessons/${module.slug}.md`,
+  lessonPath: lessonPaths[module.slug],
 }));
 
 export const moduleBySlug = new Map(modules.map((module) => [module.slug, module]));

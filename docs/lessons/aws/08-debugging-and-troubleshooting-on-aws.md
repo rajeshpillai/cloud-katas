@@ -10,8 +10,8 @@ This lesson practices troubleshooting EKS workloads using Kubernetes commands, C
 
 ## Prerequisites
 
-- Completed [Amazon EKS](amazon-eks-elastic-kubernetes-service.md)
-- Completed [Observability on AWS](observability-on-aws.md)
+- Completed [Amazon EKS](02-amazon-eks-elastic-kubernetes-service.md)
+- Completed [Observability on AWS](07-observability-on-aws.md)
 
 ## Learning Objectives
 

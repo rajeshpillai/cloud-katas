@@ -10,7 +10,7 @@ This lesson creates a small GKE cluster, deploys a sample workload, and reviews 
 
 ## Prerequisites
 
-- Completed [Docker and Kubernetes Basics](docker-and-kubernetes-basics.md)
+- Completed [Docker and Kubernetes Basics](02-docker-and-kubernetes-basics.md)
 - A GCP project with billing enabled
 - `gcloud` and `kubectl`
 

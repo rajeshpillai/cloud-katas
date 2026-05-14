@@ -10,8 +10,8 @@ This lesson practices a repeatable Kubernetes troubleshooting workflow using `ku
 
 ## Prerequisites
 
-- Completed [Google Kubernetes Engine (GKE)](google-kubernetes-engine-gke.md)
-- Completed [Observability on GCP](observability-on-gcp.md)
+- Completed [Google Kubernetes Engine (GKE)](03-google-kubernetes-engine-gke.md)
+- Completed [Observability on GCP](09-observability-on-gcp.md)
 - Access to a Kubernetes cluster
 
 ## Learning Objectives

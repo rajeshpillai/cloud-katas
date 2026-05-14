@@ -10,7 +10,7 @@ This lesson shows how to reason about metrics, logs, traces, alerts, and dashboa
 
 ## Prerequisites
 
-- Completed [Google Kubernetes Engine (GKE)](google-kubernetes-engine-gke.md)
+- Completed [Google Kubernetes Engine (GKE)](03-google-kubernetes-engine-gke.md)
 - A running workload or sample application
 
 ## Learning Objectives

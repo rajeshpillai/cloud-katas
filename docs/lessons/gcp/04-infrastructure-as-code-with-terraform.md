@@ -10,7 +10,7 @@ This lesson introduces Terraform by creating a simple GCP resource, reviewing pl
 
 ## Prerequisites
 
-- Completed [GCP Fundamentals](gcp-fundamentals.md)
+- Completed [GCP Fundamentals](01-gcp-fundamentals.md)
 - Terraform installed
 - `gcloud` authenticated
 

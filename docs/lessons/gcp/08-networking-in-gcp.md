@@ -10,7 +10,7 @@ This lesson introduces VPCs, subnets, firewall rules, Cloud DNS, load balancing,
 
 ## Prerequisites
 
-- Completed [GCP Fundamentals](gcp-fundamentals.md)
+- Completed [GCP Fundamentals](01-gcp-fundamentals.md)
 - Permission to create networking resources
 
 ## Learning Objectives

@@ -10,7 +10,7 @@ This lesson introduces VPCs, subnets, route tables, security groups, load balanc
 
 ## Prerequisites
 
-- Completed [AWS Fundamentals](aws-fundamentals.md)
+- Completed [AWS Fundamentals](01-aws-fundamentals.md)
 - Permission to create VPC resources
 
 ## Learning Objectives

@@ -10,8 +10,8 @@ This lesson creates an EKS cluster, deploys a sample workload, and introduces ma
 
 ## Prerequisites
 
-- Completed [Docker and Kubernetes Basics](docker-and-kubernetes-basics.md)
-- Completed [AWS Fundamentals](aws-fundamentals.md)
+- Completed [Docker and Kubernetes Basics](../gcp/02-docker-and-kubernetes-basics.md)
+- Completed [AWS Fundamentals](01-aws-fundamentals.md)
 - `aws`, `kubectl`, and `eksctl`
 
 ## Learning Objectives

@@ -10,7 +10,7 @@ This lesson practices AWS IAM review, Secrets Manager, CloudTrail, security grou
 
 ## Prerequisites
 
-- Completed [AWS Fundamentals](aws-fundamentals.md)
+- Completed [AWS Fundamentals](01-aws-fundamentals.md)
 - Permission to inspect IAM, CloudTrail, and Secrets Manager
 
 ## Learning Objectives

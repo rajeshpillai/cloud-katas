@@ -10,8 +10,8 @@ This lesson uses Terraform to create a simple AWS resource and discusses S3 remo
 
 ## Prerequisites
 
-- Completed [AWS Fundamentals](aws-fundamentals.md)
-- Completed [Infrastructure as Code with Terraform](infrastructure-as-code-with-terraform.md)
+- Completed [AWS Fundamentals](01-aws-fundamentals.md)
+- Completed [Infrastructure as Code with Terraform](../gcp/04-infrastructure-as-code-with-terraform.md)
 - Terraform and AWS CLI
 
 ## Learning Objectives

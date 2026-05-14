@@ -10,8 +10,8 @@ This lesson adapts a GitLab CI/CD pipeline for AWS by building a container image
 
 ## Prerequisites
 
-- Completed [CI/CD with GitLab](cicd-with-gitlab.md)
-- Completed [Amazon EKS](amazon-eks-elastic-kubernetes-service.md)
+- Completed [CI/CD with GitLab](../gcp/06-cicd-with-gitlab.md)
+- Completed [Amazon EKS](02-amazon-eks-elastic-kubernetes-service.md)
 - An ECR repository and AWS credentials suitable for CI
 
 ## Learning Objectives

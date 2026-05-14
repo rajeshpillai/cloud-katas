@@ -13,6 +13,7 @@
 - [x] Create lesson template in `docs/lessons`.
 - [x] Create lesson content for all 18 modules.
 - [x] Connect frontend module metadata to lesson file paths.
+- [x] Group lessons into sequenced GCP and AWS folders.
 
 ## Next
 

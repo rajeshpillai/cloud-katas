@@ -10,7 +10,7 @@ This lesson creates a basic GitLab CI/CD pipeline that builds, tests, scans, and
 
 ## Prerequisites
 
-- Completed [Docker and Kubernetes Basics](docker-and-kubernetes-basics.md)
+- Completed [Docker and Kubernetes Basics](02-docker-and-kubernetes-basics.md)
 - A GitLab project
 - A GitLab runner or GitLab shared runners
 
