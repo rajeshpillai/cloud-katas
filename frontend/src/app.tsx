@@ -126,6 +126,7 @@ function LearningPortal() {
             <span className={`provider-pill ${activeModule.provider}`}>{activeModule.provider}</span>
             <h1>{activeModule.title}</h1>
             <p>{activeModule.objectives.join(" • ")}</p>
+            <p className="lesson-path">Lesson file: {activeModule.lessonPath}</p>
           </div>
           <button className="primary-action" type="button" onClick={() => toggleModule(activeModule.slug)}>
             <CheckCircle2 size={20} />

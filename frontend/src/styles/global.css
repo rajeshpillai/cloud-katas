@@ -267,6 +267,13 @@ button {
   line-height: 1.6;
 }
 
+.hero .lesson-path {
+  margin-top: 12px;
+  color: var(--ink);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.86rem;
+}
+
 .primary-action {
   flex: 0 0 auto;
   padding: 0 16px;

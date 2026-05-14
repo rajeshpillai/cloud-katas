@@ -1,6 +1,6 @@
 export type Provider = "gcp" | "aws" | "shared";
 
-export type Module = {
+type ModuleDefinition = {
   id: number;
   slug: string;
   title: string;
@@ -13,7 +13,11 @@ export type Module = {
   mermaid: string;
 };
 
-export const modules: Module[] = [
+export type Module = ModuleDefinition & {
+  lessonPath: string;
+};
+
+const moduleDefinitions: ModuleDefinition[] = [
   {
     id: 1,
     slug: "gcp-fundamentals",
@@ -231,5 +235,10 @@ export const modules: Module[] = [
     mermaid: "graph LR\nA[Issue Detected] --> B[Check Logs]\nB --> C[Inspect Pods]\nC --> D[Check Events]\nD --> E[Use Debug Tools]\nE --> F[Identify Root Cause]\nF --> G[Apply Fix]",
   },
 ];
+
+export const modules: Module[] = moduleDefinitions.map((module) => ({
+  ...module,
+  lessonPath: `docs/lessons/${module.slug}.md`,
+}));
 
 export const moduleBySlug = new Map(modules.map((module) => [module.slug, module]));

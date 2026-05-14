@@ -10,6 +10,9 @@
 - [x] Build the first frontend version in `frontend`.
 - [x] Move Markdown documentation into `docs`.
 - [x] Commit the first web portal milestone.
+- [x] Create lesson template in `docs/lessons`.
+- [x] Create lesson content for all 18 modules.
+- [x] Connect frontend module metadata to lesson file paths.
 
 ## Next
 
