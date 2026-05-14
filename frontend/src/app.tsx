@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { BookOpen, CheckCircle2, Moon, PanelLeftClose, PanelLeftOpen, RotateCcw, Search, ShieldCheck, Sun } from "lucide-react";
-import { Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
+import { Link, Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { MermaidDiagram } from "./components/mermaid-diagram";
 import { LessonContent } from "./components/lesson-content";
 import { ModuleNav } from "./components/module-nav";
@@ -140,7 +140,7 @@ function LearningPortal() {
     <main className={`app-shell ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
       <aside className="sidebar">
         <div className="sidebar-header">
-          <div className="brand">
+          <Link className="brand" to="/" aria-label="Cloud Katas home">
             <div className="brand-mark">
               <BookOpen size={22} />
             </div>
@@ -148,7 +148,7 @@ function LearningPortal() {
               <span>Cloud Katas</span>
               <strong>GCP to AWS</strong>
             </div>
-          </div>
+          </Link>
           <button
             className="sidebar-toggle"
             type="button"
