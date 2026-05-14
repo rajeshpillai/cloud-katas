@@ -19,10 +19,10 @@
 - [x] Lazy-load Mermaid diagrams.
 - [x] Add collapsible sidebar.
 - [x] Add dark and light mode toggle.
+- [x] Add root `readme.md` with setup, development, build, and preview instructions.
 
 ## Next
 
 - [x] Add shareable module routes with React Router.
-- [ ] Add root `readme.md` with setup, development, build, and preview instructions.
 - [ ] Add Playwright smoke tests.
 - [ ] Prepare static deployment configuration.
