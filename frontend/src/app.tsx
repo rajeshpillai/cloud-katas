@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { BookOpen, CheckCircle2, RotateCcw, Search, ShieldCheck } from "lucide-react";
+import { Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { MermaidDiagram } from "./components/mermaid-diagram";
 import { ModuleNav } from "./components/module-nav";
 import { ProgressMeter } from "./components/progress-meter";
@@ -10,7 +11,19 @@ import { loadProgress, resetProgress, saveProgress, type Progress } from "./stat
 type Filter = Provider | "all";
 
 export function App() {
-  const [activeSlug, setActiveSlug] = useState(modules[0].slug);
+  return (
+    <Routes>
+      <Route path="/" element={<Navigate to={`/modules/${modules[0].slug}`} replace />} />
+      <Route path="/modules/:slug" element={<LearningPortal />} />
+      <Route path="*" element={<Navigate to={`/modules/${modules[0].slug}`} replace />} />
+    </Routes>
+  );
+}
+
+function LearningPortal() {
+  const navigate = useNavigate();
+  const { slug } = useParams();
+  const activeSlug = moduleBySlug.has(slug ?? "") ? slug ?? modules[0].slug : modules[0].slug;
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
   const [progress, setProgress] = useState<Progress>(() => loadProgress());
@@ -18,6 +31,12 @@ export function App() {
   useEffect(() => {
     saveProgress(progress);
   }, [progress]);
+
+  useEffect(() => {
+    if (slug && !moduleBySlug.has(slug)) {
+      navigate(`/modules/${modules[0].slug}`, { replace: true });
+    }
+  }, [navigate, slug]);
 
   const activeModule = moduleBySlug.get(activeSlug) ?? modules[0];
   const completedSet = new Set(progress.completedModules);
@@ -66,6 +85,10 @@ export function App() {
     setProgress({ completedModules: [], completedExercises: {} });
   }
 
+  function selectModule(moduleSlug: string) {
+    navigate(`/modules/${moduleSlug}`);
+  }
+
   return (
     <main className="app-shell">
       <aside className="sidebar">
@@ -94,7 +117,7 @@ export function App() {
           ))}
         </div>
 
-        <ModuleNav modules={filteredModules} activeSlug={activeSlug} completed={progress.completedModules} isLocked={isLocked} onSelect={setActiveSlug} />
+        <ModuleNav modules={filteredModules} activeSlug={activeSlug} completed={progress.completedModules} isLocked={isLocked} onSelect={selectModule} />
       </aside>
 
       <section className="content">
@@ -138,7 +161,7 @@ export function App() {
                 {activeModule.prerequisites.map((slug) => {
                   const prerequisite = moduleBySlug.get(slug);
                   return (
-                    <button key={slug} type="button" onClick={() => setActiveSlug(slug)}>
+                    <button key={slug} type="button" onClick={() => selectModule(slug)}>
                       {completedSet.has(slug) ? <CheckCircle2 size={17} /> : <ShieldCheck size={17} />}
                       {prerequisite?.title ?? slug}
                     </button>
