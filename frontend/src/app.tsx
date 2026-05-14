@@ -5,7 +5,7 @@ import { MermaidDiagram } from "./components/mermaid-diagram";
 import { LessonContent } from "./components/lesson-content";
 import { ModuleNav } from "./components/module-nav";
 import { ProgressMeter } from "./components/progress-meter";
-import { lessonContentByPath } from "./data/lesson-content";
+import { loadLessonContent } from "./data/lesson-content";
 import { modules, moduleBySlug, type Module, type Provider } from "./data/modules";
 import { bestPractices, certifications, resources } from "./data/resources";
 import { loadProgress, resetProgress, saveProgress, type Progress } from "./state/progress";
@@ -29,6 +29,8 @@ function LearningPortal() {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
   const [progress, setProgress] = useState<Progress>(() => loadProgress());
+  const [lessonContent, setLessonContent] = useState("");
+  const [lessonLoading, setLessonLoading] = useState(true);
 
   useEffect(() => {
     saveProgress(progress);
@@ -56,7 +58,28 @@ function LearningPortal() {
 
   const nextModule = modules.find((module) => !completedSet.has(module.slug) && !isLocked(module));
   const completedExercises = progress.completedExercises[activeModule.slug] ?? [];
-  const lessonContent = lessonContentByPath[activeModule.lessonPath] ?? "";
+
+  useEffect(() => {
+    let cancelled = false;
+    setLessonLoading(true);
+    setLessonContent("");
+
+    loadLessonContent(activeModule.lessonPath)
+      .then((content) => {
+        if (!cancelled) {
+          setLessonContent(content);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setLessonLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeModule.lessonPath]);
 
   function toggleModule(slug: string) {
     setProgress((current) => {
@@ -218,7 +241,9 @@ function LearningPortal() {
             <span>Lesson</span>
             <h2>Full Lesson Content</h2>
           </div>
-          {lessonContent ? <LessonContent content={lessonContent} /> : <p className="muted">Lesson content is not available yet.</p>}
+          {lessonLoading ? <p className="muted">Loading lesson...</p> : null}
+          {!lessonLoading && lessonContent ? <LessonContent content={lessonContent} /> : null}
+          {!lessonLoading && !lessonContent ? <p className="muted">Lesson content is not available yet.</p> : null}
         </section>
 
         <section className="resource-grid">

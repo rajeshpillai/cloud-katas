@@ -1,12 +1,16 @@
 const lessonFiles = import.meta.glob("../../../docs/lessons/**/*.md", {
   query: "?raw",
   import: "default",
-  eager: true,
-}) as Record<string, string>;
+}) as Record<string, () => Promise<string>>;
 
-export const lessonContentByPath = Object.fromEntries(
-  Object.entries(lessonFiles).map(([path, content]) => {
+const lessonLoadersByPath = Object.fromEntries(
+  Object.entries(lessonFiles).map(([path, loader]) => {
     const normalizedPath = path.replace("../../../", "");
-    return [normalizedPath, content];
+    return [normalizedPath, loader];
   }),
-) as Record<string, string>;
+) as Record<string, () => Promise<string>>;
+
+export async function loadLessonContent(path: string) {
+  const loader = lessonLoadersByPath[path];
+  return loader ? loader() : "";
+}

@@ -15,11 +15,12 @@
 - [x] Connect frontend module metadata to lesson file paths.
 - [x] Group lessons into sequenced GCP and AWS folders.
 - [x] Render lesson Markdown content in the frontend.
+- [x] Lazy-load lesson Markdown content.
+- [x] Lazy-load Mermaid diagrams.
 
 ## Next
 
 - [x] Add shareable module routes with React Router.
 - [ ] Add root `readme.md` with setup, development, build, and preview instructions.
 - [ ] Add Playwright smoke tests.
-- [ ] Lazy-load Mermaid to reduce the production bundle size.
 - [ ] Prepare static deployment configuration.
