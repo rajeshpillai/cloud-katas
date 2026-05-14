@@ -1,0 +1,3 @@
+# The sample app uses only the standard library.
+# This file exists so the multi-stage build pattern stays
+# realistic: a real app installs deps here, in the build stage.

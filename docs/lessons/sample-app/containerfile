@@ -1,9 +1,46 @@
-FROM python:3.13-alpine
+# syntax=docker/dockerfile:1.7
+
+ARG PYTHON_VERSION=3.13
+ARG ALPINE_VERSION=3.20
+
+# --- Build stage: install deps and pre-compile bytecode ---
+FROM python:${PYTHON_VERSION}-alpine${ALPINE_VERSION} AS build
+
+WORKDIR /build
+
+ENV PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+COPY requirements.txt ./
+RUN python -m venv /opt/venv \
+    && /opt/venv/bin/pip install --upgrade pip \
+    && /opt/venv/bin/pip install -r requirements.txt
+
+COPY app.py ./
+RUN /opt/venv/bin/python -m compileall -q .
+
+# --- Runtime stage: minimal, non-root, tini for PID 1 ---
+FROM python:${PYTHON_VERSION}-alpine${ALPINE_VERSION} AS runtime
+
+RUN apk add --no-cache tini \
+    && addgroup -S app \
+    && adduser -S -G app -h /app -s /sbin/nologin app
 
 WORKDIR /app
-COPY app.py /app/app.py
 
-ENV PORT=8080
+COPY --from=build --chown=app:app /opt/venv /opt/venv
+COPY --from=build --chown=app:app /build/app.py /build/__pycache__ /app/
+
+ENV PATH=/opt/venv/bin:$PATH \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PORT=8080
+
+USER app
 EXPOSE 8080
 
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8080/healthz', timeout=2).status == 200 else 1)"
+
+ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["python", "/app/app.py"]
