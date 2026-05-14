@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { BookOpen, CheckCircle2, PanelLeftClose, PanelLeftOpen, RotateCcw, Search, ShieldCheck } from "lucide-react";
+import { BookOpen, CheckCircle2, Moon, PanelLeftClose, PanelLeftOpen, RotateCcw, Search, ShieldCheck, Sun } from "lucide-react";
 import { Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { MermaidDiagram } from "./components/mermaid-diagram";
 import { LessonContent } from "./components/lesson-content";
@@ -11,6 +11,16 @@ import { bestPractices, certifications, resources } from "./data/resources";
 import { loadProgress, resetProgress, saveProgress, type Progress } from "./state/progress";
 
 type Filter = Provider | "all";
+type Theme = "light" | "dark";
+
+function getInitialTheme(): Theme {
+  const savedTheme = window.localStorage.getItem("cloud-katas-theme");
+  if (savedTheme === "light" || savedTheme === "dark") {
+    return savedTheme;
+  }
+
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
 
 export function App() {
   return (
@@ -32,6 +42,7 @@ function LearningPortal() {
   const [lessonContent, setLessonContent] = useState("");
   const [lessonLoading, setLessonLoading] = useState(true);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => window.localStorage.getItem("cloud-katas-sidebar") === "collapsed");
+  const [theme, setTheme] = useState<Theme>(() => getInitialTheme());
 
   useEffect(() => {
     saveProgress(progress);
@@ -40,6 +51,11 @@ function LearningPortal() {
   useEffect(() => {
     window.localStorage.setItem("cloud-katas-sidebar", sidebarCollapsed ? "collapsed" : "expanded");
   }, [sidebarCollapsed]);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    window.localStorage.setItem("cloud-katas-theme", theme);
+  }, [theme]);
 
   useEffect(() => {
     if (slug && !moduleBySlug.has(slug)) {
@@ -165,6 +181,18 @@ function LearningPortal() {
       </aside>
 
       <section className="content">
+        <div className="top-actions">
+          <button
+            className="theme-toggle"
+            type="button"
+            onClick={() => setTheme((current) => (current === "light" ? "dark" : "light"))}
+            aria-label={theme === "light" ? "Use dark mode" : "Use light mode"}
+            title={theme === "light" ? "Use dark mode" : "Use light mode"}
+          >
+            {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
+          </button>
+        </div>
+
         <header className="hero">
           <div>
             <span className={`provider-pill ${activeModule.provider}`}>{activeModule.provider}</span>

@@ -2,18 +2,44 @@
   color-scheme: light;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: #102033;
-  background: #f4f6f8;
+  background: var(--page);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+  --page: #f4f6f8;
   --panel: #ffffff;
+  --sidebar: #fbfcfe;
+  --control: #ffffff;
+  --subtle: #f8fafc;
   --line: #d8e0ea;
   --text-soft: #617083;
   --blue: #2167c7;
   --green: #1b7f5f;
   --orange: #b35a1f;
   --ink: #102033;
+  --code-bg: #101827;
+  --inline-code: #edf2f7;
   --shadow: 0 16px 40px rgba(16, 32, 51, 0.08);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  color: #e8eef7;
+  background: var(--page);
+  --page: #0e141b;
+  --panel: #151d27;
+  --sidebar: #111922;
+  --control: #1b2531;
+  --subtle: #111922;
+  --line: #2b3848;
+  --text-soft: #9cadbf;
+  --blue: #5c9dff;
+  --green: #42b88d;
+  --orange: #e48a4a;
+  --ink: #e8eef7;
+  --code-bg: #080d13;
+  --inline-code: #253244;
+  --shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
 }
 
 * {
@@ -24,6 +50,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background: var(--page);
 }
 
 button,
@@ -53,7 +80,7 @@ button {
   overflow: auto;
   padding: 24px;
   border-right: 1px solid var(--line);
-  background: #fbfcfe;
+  background: var(--sidebar);
 }
 
 .sidebar-header {
@@ -101,7 +128,8 @@ button {
   min-width: 0;
 }
 
-.sidebar-toggle {
+.sidebar-toggle,
+.theme-toggle {
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
@@ -111,7 +139,7 @@ button {
   border: 1px solid var(--line);
   border-radius: 8px;
   color: var(--ink);
-  background: #ffffff;
+  background: var(--control);
 }
 
 .sidebar-collapsed .sidebar {
@@ -145,7 +173,7 @@ button {
   height: 10px;
   overflow: hidden;
   border-radius: 999px;
-  background: #e4eaf1;
+  background: var(--line);
 }
 
 .progress-track span {
@@ -164,7 +192,7 @@ button {
   margin-bottom: 12px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--control);
 }
 
 .search-box input {
@@ -172,6 +200,7 @@ button {
   border: 0;
   outline: 0;
   color: var(--ink);
+  background: transparent;
 }
 
 .filter-row {
@@ -193,7 +222,7 @@ button {
   border: 1px solid var(--line);
   border-radius: 8px;
   color: var(--ink);
-  background: #ffffff;
+  background: var(--control);
 }
 
 .filter-row button {
@@ -231,7 +260,7 @@ button {
   border-radius: 8px;
   text-align: left;
   color: var(--ink);
-  background: #ffffff;
+  background: var(--control);
 }
 
 .module-card.active {
@@ -281,6 +310,12 @@ button {
 .content {
   min-width: 0;
   padding: 32px;
+}
+
+.top-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
 }
 
 .hero {
@@ -406,7 +441,7 @@ button {
   padding: 7px 10px;
   border: 1px solid var(--line);
   border-radius: 999px;
-  background: #f8fafc;
+  background: var(--subtle);
 }
 
 .exercise-list {
@@ -421,6 +456,7 @@ button {
   padding: 12px;
   border: 1px solid var(--line);
   border-radius: 8px;
+  background: var(--control);
 }
 
 .exercise-list input {
@@ -451,6 +487,7 @@ button {
   align-items: center;
   border: 1px solid var(--line);
   border-radius: 8px;
+  background: var(--control);
 }
 
 .diagram-panel {
@@ -502,7 +539,7 @@ button {
   overflow: auto;
   padding: 16px;
   border-radius: 8px;
-  background: #101827;
+  background: var(--code-bg);
 }
 
 .lesson-content code {
@@ -513,7 +550,7 @@ button {
   padding: 2px 5px;
   border-radius: 6px;
   color: var(--ink);
-  background: #edf2f7;
+  background: var(--inline-code);
 }
 
 .lesson-content pre code {
@@ -527,7 +564,7 @@ button {
   place-items: center;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #fbfcfe;
+  background: var(--subtle);
 }
 
 .diagram-canvas svg {

@@ -18,6 +18,7 @@
 - [x] Lazy-load lesson Markdown content.
 - [x] Lazy-load Mermaid diagrams.
 - [x] Add collapsible sidebar.
+- [x] Add dark and light mode toggle.
 
 ## Next
 
