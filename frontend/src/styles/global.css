@@ -320,7 +320,8 @@ button {
 }
 
 .lesson-card,
-.diagram-panel {
+.diagram-panel,
+.lesson-reader-panel {
   padding: 24px;
 }
 
@@ -409,6 +410,69 @@ button {
 
 .diagram-panel {
   margin-bottom: 18px;
+}
+
+.lesson-reader-panel {
+  margin-bottom: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.lesson-content {
+  max-width: 980px;
+  color: var(--ink);
+  line-height: 1.7;
+}
+
+.lesson-content h1 {
+  margin: 0 0 18px;
+  font-size: 2rem;
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+
+.lesson-content h2 {
+  margin: 28px 0 10px;
+  font-size: 1.3rem;
+}
+
+.lesson-content h3 {
+  margin: 22px 0 8px;
+  font-size: 1.05rem;
+}
+
+.lesson-content p,
+.lesson-content ul,
+.lesson-content ol {
+  color: var(--text-soft);
+}
+
+.lesson-content a {
+  color: var(--blue);
+  font-weight: 700;
+}
+
+.lesson-content pre {
+  overflow: auto;
+  padding: 16px;
+  border-radius: 8px;
+  background: #101827;
+}
+
+.lesson-content code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+.lesson-content :not(pre) > code {
+  padding: 2px 5px;
+  border-radius: 6px;
+  color: var(--ink);
+  background: #edf2f7;
+}
+
+.lesson-content pre code {
+  color: #e7edf6;
 }
 
 .diagram-canvas {

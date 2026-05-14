@@ -14,6 +14,7 @@
 - [x] Create lesson content for all 18 modules.
 - [x] Connect frontend module metadata to lesson file paths.
 - [x] Group lessons into sequenced GCP and AWS folders.
+- [x] Render lesson Markdown content in the frontend.
 
 ## Next
 
