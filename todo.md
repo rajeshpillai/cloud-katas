@@ -20,9 +20,9 @@
 - [x] Add collapsible sidebar.
 - [x] Add dark and light mode toggle.
 - [x] Add root `readme.md` with setup, development, build, and preview instructions.
+- [x] Add Playwright smoke tests.
 
 ## Next
 
 - [x] Add shareable module routes with React Router.
-- [ ] Add Playwright smoke tests.
 - [ ] Prepare static deployment configuration.

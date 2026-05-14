@@ -76,6 +76,15 @@ cd frontend
 npm run preview
 ```
 
+## Smoke Tests
+
+```bash
+cd frontend
+npm run test:smoke
+```
+
+The smoke suite starts a dedicated Vite dev server and checks routing, module visibility, search, theme persistence, sidebar persistence, lesson rendering, and progress persistence.
+
 ## Lesson Content
 
 Lesson source files live in `docs/lessons`.
