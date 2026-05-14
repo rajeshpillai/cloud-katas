@@ -17,6 +17,7 @@
 - [x] Render lesson Markdown content in the frontend.
 - [x] Lazy-load lesson Markdown content.
 - [x] Lazy-load Mermaid diagrams.
+- [x] Add collapsible sidebar.
 
 ## Next
 

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { BookOpen, CheckCircle2, RotateCcw, Search, ShieldCheck } from "lucide-react";
+import { BookOpen, CheckCircle2, PanelLeftClose, PanelLeftOpen, RotateCcw, Search, ShieldCheck } from "lucide-react";
 import { Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { MermaidDiagram } from "./components/mermaid-diagram";
 import { LessonContent } from "./components/lesson-content";
@@ -31,10 +31,15 @@ function LearningPortal() {
   const [progress, setProgress] = useState<Progress>(() => loadProgress());
   const [lessonContent, setLessonContent] = useState("");
   const [lessonLoading, setLessonLoading] = useState(true);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => window.localStorage.getItem("cloud-katas-sidebar") === "collapsed");
 
   useEffect(() => {
     saveProgress(progress);
   }, [progress]);
+
+  useEffect(() => {
+    window.localStorage.setItem("cloud-katas-sidebar", sidebarCollapsed ? "collapsed" : "expanded");
+  }, [sidebarCollapsed]);
 
   useEffect(() => {
     if (slug && !moduleBySlug.has(slug)) {
@@ -116,34 +121,47 @@ function LearningPortal() {
   }
 
   return (
-    <main className="app-shell">
+    <main className={`app-shell ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
       <aside className="sidebar">
-        <div className="brand">
-          <div className="brand-mark">
-            <BookOpen size={22} />
+        <div className="sidebar-header">
+          <div className="brand">
+            <div className="brand-mark">
+              <BookOpen size={22} />
+            </div>
+            <div className="sidebar-label">
+              <span>Cloud Katas</span>
+              <strong>GCP to AWS</strong>
+            </div>
           </div>
-          <div>
-            <span>Cloud Katas</span>
-            <strong>GCP to AWS</strong>
+          <button
+            className="sidebar-toggle"
+            type="button"
+            onClick={() => setSidebarCollapsed((current) => !current)}
+            aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {sidebarCollapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
+          </button>
+        </div>
+
+        <div className="sidebar-panel">
+          <ProgressMeter completed={progress.completedModules.length} total={modules.length} label="Learning path" />
+
+          <div className="search-box">
+            <Search size={18} aria-hidden="true" />
+            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search modules" aria-label="Search modules" />
           </div>
+
+          <div className="filter-row" aria-label="Filter modules">
+            {(["all", "gcp", "shared", "aws"] as Filter[]).map((item) => (
+              <button key={item} className={filter === item ? "selected" : ""} type="button" onClick={() => setFilter(item)}>
+                {item}
+              </button>
+            ))}
+          </div>
+
+          <ModuleNav modules={filteredModules} activeSlug={activeSlug} completed={progress.completedModules} isLocked={isLocked} onSelect={selectModule} />
         </div>
-
-        <ProgressMeter completed={progress.completedModules.length} total={modules.length} label="Learning path" />
-
-        <div className="search-box">
-          <Search size={18} aria-hidden="true" />
-          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search modules" aria-label="Search modules" />
-        </div>
-
-        <div className="filter-row" aria-label="Filter modules">
-          {(["all", "gcp", "shared", "aws"] as Filter[]).map((item) => (
-            <button key={item} className={filter === item ? "selected" : ""} type="button" onClick={() => setFilter(item)}>
-              {item}
-            </button>
-          ))}
-        </div>
-
-        <ModuleNav modules={filteredModules} activeSlug={activeSlug} completed={progress.completedModules} isLocked={isLocked} onSelect={selectModule} />
       </aside>
 
       <section className="content">
