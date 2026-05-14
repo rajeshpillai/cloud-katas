@@ -21,8 +21,29 @@
 - [x] Add dark and light mode toggle.
 - [x] Add root `readme.md` with setup, development, build, and preview instructions.
 - [x] Add Playwright smoke tests.
+- [x] Add shared sample app for hands-on lessons.
+- [x] Update lesson template for lab-ready content.
+- [x] Add scannable lesson hooks to lesson index.
 
 ## Next
 
 - [x] Add shareable module routes with React Router.
+- [x] Upgrade GCP lesson 1 to lab-ready depth.
+- [ ] Upgrade GCP lesson 2 to lab-ready depth.
+- [ ] Upgrade GCP lesson 3 to lab-ready depth.
+- [ ] Upgrade GCP lesson 4 to lab-ready depth.
+- [ ] Upgrade GCP lesson 5 to lab-ready depth.
+- [ ] Upgrade GCP lesson 6 to lab-ready depth.
+- [ ] Upgrade GCP lesson 7 to lab-ready depth.
+- [ ] Upgrade GCP lesson 8 to lab-ready depth.
+- [ ] Upgrade GCP lesson 9 to lab-ready depth.
+- [ ] Upgrade GCP lesson 10 to lab-ready depth.
+- [ ] Upgrade AWS lesson 1 to lab-ready depth.
+- [ ] Upgrade AWS lesson 2 to lab-ready depth.
+- [ ] Upgrade AWS lesson 3 to lab-ready depth.
+- [ ] Upgrade AWS lesson 4 to lab-ready depth.
+- [ ] Upgrade AWS lesson 5 to lab-ready depth.
+- [ ] Upgrade AWS lesson 6 to lab-ready depth.
+- [ ] Upgrade AWS lesson 7 to lab-ready depth.
+- [ ] Upgrade AWS lesson 8 to lab-ready depth.
 - [ ] Prepare static deployment configuration.
