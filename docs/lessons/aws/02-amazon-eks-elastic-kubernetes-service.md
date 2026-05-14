@@ -107,35 +107,83 @@ kubectl config set-context --current --namespace=sample
 kubectl create serviceaccount sample
 ```
 
-Create `eks/deployment.yaml`:
+Create `eks/deployment.yaml` carrying the hardening baseline from [../gcp/02-docker-and-kubernetes-basics.md](../gcp/02-docker-and-kubernetes-basics.md). The EKS-specific differences: registry image URL, EKS NLB service annotations, and `automountServiceAccountToken` left at the default (true) so IRSA can project a token.
 
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: sample
-  labels: { app: sample }
+  labels:
+    app.kubernetes.io/name: sample
+    app.kubernetes.io/version: "v1"
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: cloud-katas
 spec:
   replicas: 2
+  revisionHistoryLimit: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   selector:
-    matchLabels: { app: sample }
+    matchLabels:
+      app.kubernetes.io/name: sample
   template:
     metadata:
-      labels: { app: sample }
+      labels:
+        app.kubernetes.io/name: sample
+        app.kubernetes.io/version: "v1"
     spec:
       serviceAccountName: sample
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: sample
       containers:
         - name: sample
           image: REPLACE_WITH_IMAGE
           ports:
-            - containerPort: 8080
+            - name: http
+              containerPort: 8080
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+          startupProbe:
+            httpGet: { path: /healthz, port: http }
+            failureThreshold: 30
+            periodSeconds: 1
           readinessProbe:
-            httpGet: { path: /readyz, port: 8080 }
+            httpGet: { path: /readyz, port: http }
           livenessProbe:
-            httpGet: { path: /healthz, port: 8080 }
+            httpGet: { path: /healthz, port: http }
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 5"]
           resources:
             requests: { cpu: "100m", memory: "128Mi" }
             limits: { cpu: "500m", memory: "256Mi" }
+      volumes:
+        - name: tmp
+          emptyDir: {}
 ```
 
 Create `eks/service.yaml`:
@@ -145,16 +193,20 @@ apiVersion: v1
 kind: Service
 metadata:
   name: sample
+  labels:
+    app.kubernetes.io/name: sample
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-type: "external"
     service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
     service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
 spec:
   type: LoadBalancer
-  selector: { app: sample }
+  selector:
+    app.kubernetes.io/name: sample
   ports:
-    - port: 80
-      targetPort: 8080
+    - name: http
+      port: 80
+      targetPort: http
 ```
 
 Apply.
@@ -219,7 +271,7 @@ kubectl rollout status deployment/sample
 Validate the token exchange from inside a pod.
 
 ```bash
-POD=$(kubectl get pod -l app=sample -o jsonpath='{.items[0].metadata.name}')
+POD=$(kubectl get pod -l app.kubernetes.io/name=sample -o jsonpath='{.items[0].metadata.name}')
 
 kubectl exec "$POD" -- sh -c '
   apk add --no-cache aws-cli >/dev/null 2>&1 || true

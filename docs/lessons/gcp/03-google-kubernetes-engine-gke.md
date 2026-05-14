@@ -104,7 +104,7 @@ cd -
 
 ### 4. Deploy the Workload
 
-Create a namespace and apply manifests adapted from [02-docker-and-kubernetes-basics.md](02-docker-and-kubernetes-basics.md). The only differences are the image URL, a `LoadBalancer` service, and a `ServiceAccount` for Workload Identity.
+Create a namespace and apply manifests that carry forward the hardening baseline from [02-docker-and-kubernetes-basics.md](02-docker-and-kubernetes-basics.md). The cloud-specific differences are the registry image URL, a `LoadBalancer` service, and `automountServiceAccountToken: true` so Workload Identity can project a token.
 
 ```bash
 kubectl create namespace "$NAMESPACE"
@@ -118,6 +118,8 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: sample
+  labels:
+    app.kubernetes.io/name: sample
 ```
 
 Create `gke/deployment.yaml`:
@@ -128,30 +130,76 @@ kind: Deployment
 metadata:
   name: sample
   labels:
-    app: sample
+    app.kubernetes.io/name: sample
+    app.kubernetes.io/version: "v1"
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: cloud-katas
 spec:
   replicas: 2
+  revisionHistoryLimit: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   selector:
     matchLabels:
-      app: sample
+      app.kubernetes.io/name: sample
   template:
     metadata:
       labels:
-        app: sample
+        app.kubernetes.io/name: sample
+        app.kubernetes.io/version: "v1"
     spec:
       serviceAccountName: sample
+      # Workload Identity needs the projected SA token, so leave automount at the default (true).
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: sample
       containers:
         - name: sample
           image: REPLACE_WITH_IMAGE
           ports:
-            - containerPort: 8080
+            - name: http
+              containerPort: 8080
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+          startupProbe:
+            httpGet: { path: /healthz, port: http }
+            failureThreshold: 30
+            periodSeconds: 1
           readinessProbe:
-            httpGet: { path: /readyz, port: 8080 }
+            httpGet: { path: /readyz, port: http }
           livenessProbe:
-            httpGet: { path: /healthz, port: 8080 }
+            httpGet: { path: /healthz, port: http }
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 5"]
           resources:
             requests: { cpu: "100m", memory: "128Mi" }
             limits: { cpu: "500m", memory: "256Mi" }
+      volumes:
+        - name: tmp
+          emptyDir: {}
 ```
 
 Create `gke/service.yaml`:
@@ -161,13 +209,16 @@ apiVersion: v1
 kind: Service
 metadata:
   name: sample
+  labels:
+    app.kubernetes.io/name: sample
 spec:
   type: LoadBalancer
   selector:
-    app: sample
+    app.kubernetes.io/name: sample
   ports:
-    - port: 80
-      targetPort: 8080
+    - name: http
+      port: 80
+      targetPort: http
 ```
 
 Substitute the image URL and apply.
@@ -218,7 +269,7 @@ kubectl rollout status deployment/sample
 Prove the token exchange works inside the pod.
 
 ```bash
-POD=$(kubectl get pod -l app=sample -o jsonpath='{.items[0].metadata.name}')
+POD=$(kubectl get pod -l app.kubernetes.io/name=sample -o jsonpath='{.items[0].metadata.name}')
 kubectl exec "$POD" -- sh -c '
   apk add --no-cache curl jq >/dev/null 2>&1 || true
   curl -s -H "Metadata-Flavor: Google" \
@@ -246,7 +297,7 @@ In another terminal:
 
 ```bash
 kubectl get hpa sample -w
-kubectl get pods -l app=sample -w
+kubectl get pods -l app.kubernetes.io/name=sample -w
 ```
 
 Stop the load generator with Ctrl-C and observe the scale-down (HPA scale-down has a default 5-minute stabilization window).
@@ -255,8 +306,8 @@ Stop the load generator with Ctrl-C and observe the scale-down (HPA scale-down h
 
 ```bash
 kubectl get nodes -o wide
-kubectl get pod -l app=sample -o wide
-kubectl describe pod -l app=sample | grep -E "Node:|Labels:|ServiceAccount:"
+kubectl get pod -l app.kubernetes.io/name=sample -o wide
+kubectl describe pod -l app.kubernetes.io/name=sample | grep -E "Node:|Labels:|ServiceAccount:"
 ```
 
 For Standard clusters only, you would explore node pools, taints, and `nodeSelector` here. Autopilot abstracts those away.

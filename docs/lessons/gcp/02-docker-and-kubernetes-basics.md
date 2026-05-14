@@ -407,7 +407,7 @@ Scale up.
 ```bash
 kubectl scale deployment sample --replicas=4
 kubectl rollout status deployment/sample
-kubectl get pods -l app=sample
+kubectl get pods -l app.kubernetes.io/name=sample
 ```
 
 Build a second image to simulate a release, load it into the cluster the same way, then roll it out.
