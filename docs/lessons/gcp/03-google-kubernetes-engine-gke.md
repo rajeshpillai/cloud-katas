@@ -152,7 +152,8 @@ spec:
         app.kubernetes.io/version: "v1"
     spec:
       serviceAccountName: sample
-      # Workload Identity needs the projected SA token, so leave automount at the default (true).
+      # Workload Identity needs the projected SA token; set it explicit for symmetry with lesson 02.
+      automountServiceAccountToken: true
       terminationGracePeriodSeconds: 30
       securityContext:
         runAsNonRoot: true
@@ -162,6 +163,8 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       topologySpreadConstraints:
+        # Spread across zones on a regional Autopilot cluster.
+        # Lesson 02 used kubernetes.io/hostname because a single-node local cluster has no zones.
         - maxSkew: 1
           topologyKey: topology.kubernetes.io/zone
           whenUnsatisfiable: ScheduleAnyway
@@ -201,6 +204,12 @@ spec:
         - name: tmp
           emptyDir: {}
 ```
+
+What differs from lesson 02's manifest:
+
+- **Resource requests/limits are larger** (100m/500m CPU, 128Mi/256Mi memory). Cloud nodes have headroom that local clusters do not, and the HPA step below needs enough CPU room to scale on utilization. Lesson 02's smaller numbers were sized for a constrained local cluster.
+- **Probes use compact YAML and rely on defaults.** Lesson 02 spelled out `initialDelaySeconds` and `periodSeconds` to teach the knobs; once you know them, the defaults (`periodSeconds: 10`, `failureThreshold: 3`) are fine for a healthy app.
+- **`topologyKey` is `topology.kubernetes.io/zone`** so replicas spread across the region's zones — the spread axis that actually exists on a regional cluster.
 
 Create `gke/service.yaml`:
 
