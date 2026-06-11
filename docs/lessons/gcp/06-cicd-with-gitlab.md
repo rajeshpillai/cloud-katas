@@ -41,6 +41,19 @@ GitLab shared runners are free up to a monthly minute budget for most accounts. 
 
 ## Lab
 
+> ### Run locally with floci
+>
+> **Partly local.** You can run the build-and-deploy half of the pipeline against [kind](https://kind.sigs.k8s.io/) + the local registry.
+>
+> ```bash
+> ./labs/lab.sh up        # creates the "cloud-katas" kind cluster + local registry
+> kubectl config use-context kind-cloud-katas
+> ```
+>
+> Run each pipeline stage as a local shell command: build the image, push it to `localhost:5001`, and deploy to kind with `kubectl`. This exercises the same artifact-promotion-by-tag flow the lesson describes.
+>
+> **Not emulated locally:** GitLab↔GCP OIDC / Workload Identity federation — review the identity-federation steps conceptually.
+
 ### 1. Prepare
 
 ```bash

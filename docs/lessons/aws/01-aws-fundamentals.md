@@ -42,6 +42,19 @@ This lesson creates no billable infrastructure. Budgets are free; IAM and Organi
 
 ## Lab
 
+> ### Run locally with floci
+>
+> **Partly local.** Identity commands run against the local [floci](https://github.com/floci-io/floci) AWS emulator — IAM, STS, and Organizations are supported.
+>
+> ```bash
+> ./labs/lab.sh up        # starts the floci emulator
+> source labs/env.sh      # exports AWS_ENDPOINT_URL + fake creds
+> ```
+>
+> With the env sourced, **skip the `AWS_PROFILE` / SSO setup** (floci needs no profile) and run `aws sts get-caller-identity`, the IAM commands, and the Organizations lookups unchanged.
+>
+> **Not emulated locally:** Budgets / CloudWatch billing alarms and CloudShell — review those steps conceptually.
+
 ### 1. Inspect Your Local CLI
 
 ```bash

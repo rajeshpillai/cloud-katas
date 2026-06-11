@@ -42,6 +42,19 @@ A VPC, subnets, route tables, IGW, and security groups are free. A NAT Gateway c
 
 ## Lab
 
+> ### Run locally with floci
+>
+> **Partly local.** The [floci](https://github.com/floci-io/floci) AWS emulator implements the EC2/VPC API, so you can create and inspect the network objects in this lab.
+>
+> ```bash
+> ./labs/lab.sh up        # starts the floci emulator
+> source labs/env.sh      # exports AWS_ENDPOINT_URL + fake creds
+> ```
+>
+> With the env sourced, **skip the `AWS_PROFILE` line** and run the `aws ec2 …` create + describe commands (VPC, subnets, IGW, NAT Gateway, route tables, security groups, NACLs, endpoints) against floci.
+>
+> **Not emulated locally:** there is no real packet routing or instance reachability — you can create and inspect the objects but cannot verify end-to-end connectivity (the launch-VM-and-curl steps are simulate-only).
+
 ### 1. Prepare
 
 ```bash

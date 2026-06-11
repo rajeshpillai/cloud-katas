@@ -43,6 +43,19 @@ KMS keys cost $1/month per key plus per-request fees. Secrets Manager charges $0
 
 ## Lab
 
+> ### Run locally with floci
+>
+> **Partly local.** The [floci](https://github.com/floci-io/floci) AWS emulator covers KMS, Secrets Manager, IAM, and S3 Block Public Access.
+>
+> ```bash
+> ./labs/lab.sh up        # starts the floci emulator
+> source labs/env.sh      # exports AWS_ENDPOINT_URL + fake creds
+> ```
+>
+> With the env sourced, **skip the `AWS_PROFILE` line** and run the KMS CMK, Secrets Manager versioning, IAM, and S3 Block Public Access commands unchanged.
+>
+> **Not emulated locally:** CloudTrail, IAM Access Analyzer, GuardDuty, and Security Hub are partial or simulate-only.
+
 ### 1. Prepare
 
 ```bash

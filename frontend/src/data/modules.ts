@@ -1,5 +1,17 @@
 export type Provider = "gcp" | "aws" | "shared";
 
+export type LocalLabLevel = "full" | "partial" | "none";
+export type LocalLabStack = "floci" | "floci-gcp" | "kind";
+
+// Describes how runnable a module's lab is on the local floci-based stack
+// (see ../../../labs/). `level` also gates the future in-browser terminal.
+export type LocalLab = {
+  level: LocalLabLevel;
+  stack: LocalLabStack[];
+  services?: string[];
+  caveat?: string;
+};
+
 type ModuleDefinition = {
   id: number;
   slug: string;
@@ -11,6 +23,7 @@ type ModuleDefinition = {
   exercises: string[];
   diagramTitle: string;
   mermaid: string;
+  localLab: LocalLab;
 };
 
 export type Module = ModuleDefinition & {
@@ -74,6 +87,12 @@ const moduleDefinitions: ModuleDefinition[] = [
     ],
     diagramTitle: "GCP Architecture Overview",
     mermaid: "graph TB\nA[GCP Organization] --> B[Projects]\nB --> C[Resources]\nC --> D[Compute Engine]\nC --> E[Cloud Storage]\nC --> F[BigQuery]\nC --> G[Kubernetes Engine]",
+    localLab: {
+      level: "partial",
+      stack: ["floci-gcp"],
+      services: ["IAM", "Secret Manager"],
+      caveat: "Billing, budgets, and organization policy are not emulated — read about them or use a real project for those steps.",
+    },
   },
   {
     id: 2,
@@ -110,6 +129,11 @@ const moduleDefinitions: ModuleDefinition[] = [
     ],
     diagramTitle: "Container vs VM",
     mermaid: "graph LR\nA[Host OS] --> B[Hypervisor]\nB --> C[VM 1]\nB --> D[VM 2]\nE[Host OS] --> F[Docker Engine]\nF --> G[Container 1]\nF --> H[Container 2]",
+    localLab: {
+      level: "full",
+      stack: ["kind"],
+      caveat: "Runs entirely on Docker + kind — no cloud account needed.",
+    },
   },
   {
     id: 3,
@@ -142,6 +166,12 @@ const moduleDefinitions: ModuleDefinition[] = [
     ],
     diagramTitle: "GKE Cluster Architecture",
     mermaid: "graph TB\nA[Control Plane] --> B[API Server]\nA --> C[Scheduler]\nA --> D[Controller Manager]\nA --> E[etcd]\nF[Worker Nodes] --> G[Kubelet]\nF --> H[Kube-proxy]\nF --> I[Container Runtime]\nB --> F",
+    localLab: {
+      level: "partial",
+      stack: ["kind", "floci-gcp"],
+      services: ["local registry"],
+      caveat: "kind substitutes for a GKE cluster and the local registry for Artifact Registry; Workload Identity and managed load balancers are not emulated.",
+    },
   },
   {
     id: 4,
@@ -174,6 +204,12 @@ const moduleDefinitions: ModuleDefinition[] = [
     ],
     diagramTitle: "Terraform Workflow",
     mermaid: "graph LR\nA[Write Config] --> B[terraform init]\nB --> C[terraform plan]\nC --> D[terraform apply]\nD --> E[Resources Created]\nE --> F[terraform destroy]",
+    localLab: {
+      level: "partial",
+      stack: ["floci-gcp"],
+      services: ["Cloud Storage"],
+      caveat: "GCS state backend runs against the emulator; provider coverage for arbitrary GCP resources is partial.",
+    },
   },
   {
     id: 5,
@@ -206,6 +242,11 @@ const moduleDefinitions: ModuleDefinition[] = [
     ],
     diagramTitle: "Argo CD Architecture",
     mermaid: "graph TB\nA[Git Repository] --> B[Argo CD]\nB --> C[Kubernetes Cluster]\nC --> D[Deployments]\nC --> E[Services]\nC --> F[ConfigMaps]\nB --> G[Argo CD UI]\nG --> H[Application Status]",
+    localLab: {
+      level: "full",
+      stack: ["kind"],
+      caveat: "Argo CD installs into the kind cluster; use any public Git repo as the source of truth.",
+    },
   },
   {
     id: 6,
@@ -238,6 +279,12 @@ const moduleDefinitions: ModuleDefinition[] = [
     ],
     diagramTitle: "GitLab CI Pipeline",
     mermaid: "graph LR\nA[Code Push] --> B[Build Stage]\nB --> C[Test Stage]\nC --> D[Security Scan]\nD --> E[Deploy Stage]\nE --> F[Production]",
+    localLab: {
+      level: "partial",
+      stack: ["kind"],
+      services: ["local registry"],
+      caveat: "Build and deploy to kind via the local registry; OIDC/Workload Identity federation cannot be exercised locally.",
+    },
   },
   {
     id: 7,
@@ -273,6 +320,12 @@ const moduleDefinitions: ModuleDefinition[] = [
     ],
     diagramTitle: "GCP Security Layers",
     mermaid: "graph TB\nA[Identity] --> B[IAM]\nA --> C[Service Accounts]\nA --> M[Secret Manager]\nA --> N[Cloud Audit Logs]\nD[Network] --> E[VPC]\nD --> F[Firewalls]\nD --> G[Cloud Armor]\nH[Data] --> I[Encryption]\nH --> J[Cloud KMS]\nK[Monitoring] --> L[Security Command Center]",
+    localLab: {
+      level: "partial",
+      stack: ["floci-gcp"],
+      services: ["IAM", "Secret Manager"],
+      caveat: "IAM bindings and Secret Manager versioning run locally; Cloud KMS, audit logs, and org policy are simulate-only.",
+    },
   },
   {
     id: 8,
@@ -309,6 +362,11 @@ const moduleDefinitions: ModuleDefinition[] = [
     ],
     diagramTitle: "GCP Networking Architecture",
     mermaid: "graph TB\nA[Internet] --> B[Cloud Load Balancer]\nB --> C[VPC Network]\nC --> D[Subnets]\nD --> E[VM Instances]\nD --> F[GKE Clusters]\nC --> G[Cloud VPN]\nG --> H[On-premises]\nC --> I[Cloud Interconnect]\nI --> J[Other Clouds]",
+    localLab: {
+      level: "none",
+      stack: [],
+      caveat: "VPCs, Cloud NAT, firewall rules, and Cloud Armor have no local equivalent — this module is concept-only locally.",
+    },
   },
   {
     id: 9,
@@ -341,6 +399,11 @@ const moduleDefinitions: ModuleDefinition[] = [
     ],
     diagramTitle: "Observability Stack",
     mermaid: "graph TB\nA[Applications] --> B[Cloud Monitoring]\nA --> C[Cloud Logging]\nA --> D[Cloud Trace]\nA --> I[Cloud Profiler]\nB --> E[Dashboards]\nB --> F[Alerts]\nC --> G[Logs Explorer]\nD --> H[Trace Viewer]",
+    localLab: {
+      level: "none",
+      stack: ["kind"],
+      caveat: "Cloud Logging, log-based metrics, SLOs, and burn-rate alerts are not emulated; inspect workload logs with kubectl instead.",
+    },
   },
   {
     id: 10,
@@ -373,6 +436,11 @@ const moduleDefinitions: ModuleDefinition[] = [
     ],
     diagramTitle: "Debugging Workflow",
     mermaid: "graph LR\nA[Issue Detected] --> B[Check Logs]\nB --> C[Inspect Pods]\nC --> D[Check Events]\nD --> E[Use Debug Tools]\nE --> F[Identify Root Cause]\nF --> G[Apply Fix]",
+    localLab: {
+      level: "full",
+      stack: ["kind"],
+      caveat: "All four failure modes (ImagePullBackOff, CrashLoop, OOMKilled, Pending) reproduce in kind using the sample app's failure flags.",
+    },
   },
   {
     id: 11,
@@ -408,6 +476,12 @@ const moduleDefinitions: ModuleDefinition[] = [
     ],
     diagramTitle: "AWS Architecture Overview",
     mermaid: "graph TB\nA[AWS Organization] --> B[Accounts]\nB --> C[Resources]\nC --> D[EC2]\nC --> E[S3]\nC --> F[RDS]\nC --> G[EKS]",
+    localLab: {
+      level: "partial",
+      stack: ["floci"],
+      services: ["IAM", "STS", "Organizations"],
+      caveat: "Identity commands (get-caller-identity, IAM, STS) run against floci; Budgets and CloudShell are not emulated.",
+    },
   },
   {
     id: 12,
@@ -440,6 +514,12 @@ const moduleDefinitions: ModuleDefinition[] = [
     ],
     diagramTitle: "EKS Cluster Architecture",
     mermaid: "graph TB\nA[Control Plane] --> B[API Server]\nA --> C[Scheduler]\nA --> D[Controller Manager]\nA --> E[etcd]\nF[Worker Nodes] --> G[Kubelet]\nF --> H[Kube-proxy]\nF --> I[Container Runtime]\nB --> F",
+    localLab: {
+      level: "partial",
+      stack: ["kind", "floci"],
+      services: ["ECR", "STS"],
+      caveat: "kind substitutes for the EKS cluster and the local registry for ECR; IRSA token exchange via floci STS is partial, and NLB exposure is simulate-only.",
+    },
   },
   {
     id: 13,
@@ -472,6 +552,12 @@ const moduleDefinitions: ModuleDefinition[] = [
     ],
     diagramTitle: "Terraform Workflow",
     mermaid: "graph LR\nA[Write Config] --> B[terraform init]\nB --> C[terraform plan]\nC --> D[terraform apply]\nD --> E[Resources Created]\nE --> F[terraform destroy]",
+    localLab: {
+      level: "full",
+      stack: ["floci"],
+      services: ["S3", "DynamoDB", "STS"],
+      caveat: "S3 state bucket, DynamoDB lock table, and assume_role all run against floci end-to-end — the strongest local fit.",
+    },
   },
   {
     id: 14,
@@ -504,6 +590,12 @@ const moduleDefinitions: ModuleDefinition[] = [
     ],
     diagramTitle: "GitLab CI Pipeline",
     mermaid: "graph LR\nA[Code Push] --> B[Build Stage]\nB --> C[Test Stage]\nC --> D[Security Scan]\nD --> E[Deploy Stage]\nE --> F[Production]",
+    localLab: {
+      level: "partial",
+      stack: ["floci", "kind"],
+      services: ["STS", "ECR"],
+      caveat: "STS and ECR run against floci and deploys land in kind; the GitLab OIDC identity provider cannot be federated locally.",
+    },
   },
   {
     id: 15,
@@ -541,6 +633,12 @@ const moduleDefinitions: ModuleDefinition[] = [
     ],
     diagramTitle: "AWS Security Layers",
     mermaid: "graph TB\nA[Identity] --> B[IAM]\nA --> C[Roles]\nA --> M[Secrets Manager]\nA --> N[CloudTrail]\nD[Network] --> E[VPC]\nD --> F[Security Groups]\nD --> G[AWS WAF]\nH[Data] --> I[Encryption]\nH --> J[AWS KMS]\nK[Monitoring] --> L[AWS Security Hub]",
+    localLab: {
+      level: "partial",
+      stack: ["floci"],
+      services: ["IAM", "KMS", "Secrets Manager", "S3"],
+      caveat: "KMS encryption, Secrets Manager versions, IAM, and S3 Block Public Access run locally; CloudTrail, Access Analyzer, GuardDuty, and Security Hub are partial or simulate-only.",
+    },
   },
   {
     id: 16,
@@ -577,6 +675,12 @@ const moduleDefinitions: ModuleDefinition[] = [
     ],
     diagramTitle: "AWS Networking Architecture",
     mermaid: "graph TB\nA[Internet] --> B[Elastic Load Balancer]\nB --> C[VPC Network]\nC --> D[Subnets]\nD --> E[EC2 Instances]\nD --> F[EKS Clusters]\nC --> G[AWS VPN]\nG --> H[On-premises]\nC --> I[AWS Direct Connect]\nI --> J[Other Clouds]",
+    localLab: {
+      level: "partial",
+      stack: ["floci"],
+      services: ["EC2/VPC API"],
+      caveat: "VPC, subnet, security group, and NACL objects can be created via the EC2 API, but there is no real packet routing or instance reachability to verify.",
+    },
   },
   {
     id: 17,
@@ -609,6 +713,12 @@ const moduleDefinitions: ModuleDefinition[] = [
     ],
     diagramTitle: "Observability Stack",
     mermaid: "graph TB\nA[Applications] --> B[CloudWatch Logs]\nA --> C[CloudWatch Metrics]\nA --> D[AWS X-Ray]\nA --> I[OpenTelemetry Collector]\nC --> E[Dashboards]\nC --> F[Alarms]\nI --> J[Managed Prometheus]\nJ --> K[Managed Grafana]\nD --> H[X-Ray Console]",
+    localLab: {
+      level: "partial",
+      stack: ["floci", "kind"],
+      services: ["CloudWatch Logs", "CloudWatch Metrics"],
+      caveat: "CloudWatch Logs/Metrics and alarms run against floci with workloads in kind; X-Ray, Container Insights, AMP, and AMG are simulate-only.",
+    },
   },
   {
     id: 18,
@@ -641,6 +751,12 @@ const moduleDefinitions: ModuleDefinition[] = [
     ],
     diagramTitle: "Debugging Workflow",
     mermaid: "graph LR\nA[Issue Detected] --> B[Check Logs]\nB --> C[Inspect Pods]\nC --> D[Check Events]\nD --> E[Use Debug Tools]\nE --> F[Identify Root Cause]\nF --> G[Apply Fix]",
+    localLab: {
+      level: "partial",
+      stack: ["kind", "floci"],
+      services: ["CloudWatch"],
+      caveat: "Pod failure modes reproduce in kind; NLB target-group health and VPC CNI IP exhaustion are AWS-specific and simulate-only.",
+    },
   },
 ];
 

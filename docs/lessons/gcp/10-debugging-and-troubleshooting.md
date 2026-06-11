@@ -40,6 +40,19 @@ No additional cloud cost beyond the cluster you are using. Each broken deploymen
 
 ## Lab
 
+> ### Run locally with floci
+>
+> This lab is **fully local** — every failure mode you diagnose reproduces in a plain Kubernetes cluster, no cloud account needed. Bring up the harness cluster first:
+>
+> ```bash
+> ./labs/lab.sh up        # creates the "cloud-katas" kind cluster
+> kubectl config use-context kind-cloud-katas
+> ```
+>
+> All four scenarios (ImagePullBackOff, CrashLoopBackOff via `CRASH_ON_START`, OOMKilled via `MEMORY_HOG_MB`, and Pending) run unchanged in kind using the sample app's built-in failure flags.
+>
+> **Not emulated locally:** nothing — these are Kubernetes-level diagnostics that behave identically on GKE.
+
 ### 1. Prepare
 
 ```bash

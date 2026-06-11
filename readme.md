@@ -5,6 +5,7 @@ Cloud Katas is a web-based learning portal for a GCP-to-AWS cloud computing path
 ## Current Features
 
 - 18 sequenced learning modules across GCP, shared cloud foundations, and AWS.
+- Runnable local labs powered by [floci](https://github.com/floci-io) emulators + kind — no cloud account or cost.
 - Full Markdown lesson rendering in the browser.
 - Shareable module URLs such as `/modules/gcp-fundamentals`.
 - Mermaid architecture diagrams loaded on demand.
@@ -35,6 +36,12 @@ Cloud Katas is a web-based learning portal for a GCP-to-AWS cloud computing path
 │       ├── data
 │       ├── state
 │       └── styles
+├── labs
+│   ├── docker-compose.yml
+│   ├── kind-config.yaml
+│   ├── env.sh
+│   ├── lab.sh
+│   └── readme.md
 ├── todo.md
 └── readme.md
 ```
@@ -84,6 +91,42 @@ npm run test:smoke
 ```
 
 The smoke suite starts a dedicated Vite dev server and checks routing, module visibility, search, theme persistence, sidebar persistence, lesson rendering, and progress persistence.
+
+## Local Labs (floci)
+
+Most lessons can be run **locally and for free** against the [floci](https://github.com/floci-io) cloud emulators plus a local Kubernetes cluster — no cloud account, no billing. Look for the **"Run locally"** badge and setup panel on a module, or the **"Run locally with floci"** block inside its lesson.
+
+### Prerequisites
+
+- **Docker** (running) — runs the floci emulators and the cluster
+- **kind** and **kubectl** — for the Kubernetes labs (GKE/EKS/Argo CD/debugging)
+- The CLI for whichever path you are on: **`aws`**, **`gcloud`**, and/or **`terraform`**
+- ~2 GB free memory for the kind cluster
+
+### Try floci
+
+From the repo root:
+
+```bash
+./labs/lab.sh up        # start floci (AWS), floci-gcp, a local registry, and a kind cluster
+source labs/env.sh      # point the aws/gcloud CLIs and SDKs at the emulators
+```
+
+Then run any lab's commands. For example, the AWS S3 flow works immediately:
+
+```bash
+aws s3 mb s3://katas-demo    # AWS_ENDPOINT_URL sends this to floci, not real AWS
+aws s3 ls
+```
+
+Check health any time, and tear everything down when you are done:
+
+```bash
+./labs/lab.sh status
+./labs/lab.sh down
+```
+
+See [labs/readme.md](labs/readme.md) for the full per-module coverage table (which modules are fully local, partial, or concept-only) and troubleshooting.
 
 ## Lesson Content
 

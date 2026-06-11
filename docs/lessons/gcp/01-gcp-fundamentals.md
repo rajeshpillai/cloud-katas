@@ -42,6 +42,19 @@ This lesson should create little to no billable infrastructure. Budgets and IAM 
 
 ## Lab
 
+> ### Run locally with floci
+>
+> **Partly local.** The [floci-gcp](https://github.com/floci-io/floci-gcp) emulator covers IAM and Secret Manager, but not projects, billing, or organization policy — and `gcloud` cannot point most subcommands at a custom endpoint.
+>
+> ```bash
+> ./labs/lab.sh up        # starts the floci-gcp emulator
+> source labs/env.sh      # exports the *_EMULATOR_HOST vars + GOOGLE_CLOUD_PROJECT
+> ```
+>
+> Use this lab to practice the **IAM** steps against the emulator via the Google SDKs (which honor the emulator-host vars). Treat the project, billing, budget, and org-policy steps as read-only walkthroughs unless you have a real project.
+>
+> **Not emulated locally:** billing, budgets, and organization policy — read about them or use a real project for those steps.
+
 ### 1. Prepare Your Local CLI
 
 Sign in and inspect your current context before making changes.

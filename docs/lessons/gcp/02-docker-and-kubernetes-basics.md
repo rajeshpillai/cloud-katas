@@ -52,6 +52,23 @@ This lesson runs everything locally. No cloud resources are created and there is
 
 ## Lab
 
+> ### Run locally with floci
+>
+> This lab is already **fully local** — it needs only Docker and a Kubernetes cluster, no cloud account. The Cloud Katas lab harness gives you a ready cluster ([kind](https://kind.sigs.k8s.io/)) plus a local image registry:
+>
+> ```bash
+> ./labs/lab.sh up        # creates the "cloud-katas" kind cluster + local registry
+> kubectl config use-context kind-cloud-katas
+> ```
+>
+> Wherever this lesson says "load the image into a local cluster", use the kind form against the harness cluster:
+>
+> ```bash
+> kind load docker-image cloud-katas-sample:v1 --name cloud-katas
+> ```
+>
+> **Not emulated locally:** nothing — this lab has no cloud dependency.
+
 ### 1. Prepare
 
 Confirm the local toolchain and that a Kubernetes cluster is reachable.

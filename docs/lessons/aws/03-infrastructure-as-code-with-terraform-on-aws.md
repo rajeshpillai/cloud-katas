@@ -40,6 +40,34 @@ S3 storage and DynamoDB on-demand for a state lock are pennies per month at this
 
 ## Lab
 
+> ### Run locally with floci
+>
+> This lab runs **end-to-end** against the local [floci](https://github.com/floci-io) AWS emulator — S3, DynamoDB, and STS are all supported, so no AWS account or cost is involved.
+>
+> ```bash
+> ./labs/lab.sh up        # starts the floci emulator
+> source labs/env.sh      # exports AWS_ENDPOINT_URL + fake creds
+> ```
+>
+> With the env sourced, **skip the `export AWS_PROFILE=cloud-katas` line** below (floci needs no profile) and run every `aws …` command in this lab unchanged. For the Terraform backend and provider, point them at the emulator:
+>
+> ```hcl
+> # backend.tf — add to the `backend "s3"` block
+> #   endpoints                   = { s3 = "http://localhost:4566", dynamodb = "http://localhost:4566" }
+> #   skip_credentials_validation = true
+> #   skip_metadata_api_check     = true
+> #   skip_requesting_account_id  = true
+> #   use_path_style              = true
+>
+> # provider.tf — add to the `provider "aws"` block
+> #   endpoints { s3 = "http://localhost:4566" dynamodb = "http://localhost:4566" sts = "http://localhost:4566" iam = "http://localhost:4566" }
+> #   skip_credentials_validation = true
+> #   skip_requesting_account_id  = true
+> #   s3_use_path_style           = true
+> ```
+>
+> **Not emulated locally:** cross-account `assume_role` against a real second account — the call succeeds against floci's STS but does not enforce real trust policies.
+
 ### 1. Prepare
 
 ```bash

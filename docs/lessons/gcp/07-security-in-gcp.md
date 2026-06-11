@@ -41,6 +41,19 @@ KMS keys and Secret Manager secrets have small per-version monthly fees. Audit l
 
 ## Lab
 
+> ### Run locally with floci
+>
+> **Partly local.** The [floci-gcp](https://github.com/floci-io/floci-gcp) emulator covers IAM bindings and Secret Manager versioning.
+>
+> ```bash
+> ./labs/lab.sh up        # starts the floci-gcp emulator
+> source labs/env.sh      # exports SECRET_MANAGER_EMULATOR_HOST + GOOGLE_CLOUD_PROJECT
+> ```
+>
+> Run the IAM and Secret Manager exercises (store/retrieve secrets, pin versions, narrow bindings) against the emulator via the Google SDKs.
+>
+> **Not emulated locally:** Cloud KMS (CMEK), Cloud Audit Logs, and organization policy — read about them or use a real project.
+
 ### 1. Prepare
 
 ```bash

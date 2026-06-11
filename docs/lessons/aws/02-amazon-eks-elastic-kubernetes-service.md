@@ -41,6 +41,20 @@ EKS bills $0.10/hour for the cluster control plane plus the cost of any nodes or
 
 ## Lab
 
+> ### Run locally with floci
+>
+> **Partly local.** A [kind](https://kind.sigs.k8s.io/) cluster stands in for EKS, the local registry (`localhost:5001`) for ECR, and [floci](https://github.com/floci-io/floci) STS backs the IRSA token exchange.
+>
+> ```bash
+> ./labs/lab.sh up        # creates the "cloud-katas" kind cluster + local registry + floci
+> source labs/env.sh
+> kubectl config use-context kind-cloud-katas
+> ```
+>
+> Replace `eksctl create cluster --with-oidc` with the harness cluster above. Push the sample app to `localhost:5001` instead of ECR, and deploy with `kubectl`. Reach the Service with a NodePort or `kubectl port-forward`.
+>
+> **Not emulated locally:** IRSA token exchange via floci STS is partial, and NLB exposure / managed addons are simulate-only.
+
 ### 1. Prepare
 
 ```bash

@@ -40,6 +40,19 @@ A GCS bucket has a free tier suitable for this lab. Storing a few KB of state an
 
 ## Lab
 
+> ### Run locally with floci
+>
+> **Partly local.** The GCS remote-state backend runs against the [floci-gcp](https://github.com/floci-io/floci-gcp) emulator via `STORAGE_EMULATOR_HOST`.
+>
+> ```bash
+> ./labs/lab.sh up        # starts the floci-gcp emulator
+> source labs/env.sh      # exports STORAGE_EMULATOR_HOST + GOOGLE_CLOUD_PROJECT
+> ```
+>
+> Create the state bucket against the emulator (the Google SDKs and Terraform's GCS backend honor `STORAGE_EMULATOR_HOST`). Keep the resources you manage to Cloud Storage buckets/objects, which the emulator supports.
+>
+> **Not emulated locally:** provider coverage for arbitrary GCP resources is partial — stick to Cloud Storage resources locally.
+
 ### 1. Prepare
 
 ```bash

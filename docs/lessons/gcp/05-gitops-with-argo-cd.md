@@ -41,6 +41,19 @@ Argo CD itself is free. If you run this against the GKE cluster from lesson 03, 
 
 ## Lab
 
+> ### Run locally with floci
+>
+> This lab is **fully local** — Argo CD installs straight into a Kubernetes cluster, no cloud account needed. Bring up the harness cluster first:
+>
+> ```bash
+> ./labs/lab.sh up        # creates the "cloud-katas" kind cluster
+> kubectl config use-context kind-cloud-katas
+> ```
+>
+> Then run every `kubectl` command in this lab unchanged. Use any **public Git repo** of your own as Argo CD's source of truth.
+>
+> **Not emulated locally:** nothing — Argo CD's reconciliation loop, drift detection, and self-heal all work the same in kind.
+
 ### 1. Install Argo CD
 
 ```bash

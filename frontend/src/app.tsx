@@ -5,6 +5,7 @@ import { MermaidDiagram } from "./components/mermaid-diagram";
 import { LessonContent } from "./components/lesson-content";
 import { ModuleNav } from "./components/module-nav";
 import { ProgressMeter } from "./components/progress-meter";
+import { LocalLabBadge, LocalLabPanel } from "./components/local-lab-panel";
 import { loadLessonContent } from "./data/lesson-content";
 import { modules, moduleBySlug, type Module, type Provider } from "./data/modules";
 import { bestPractices, certifications, resources } from "./data/resources";
@@ -207,7 +208,10 @@ function LearningPortal() {
 
         <header className="hero">
           <div>
-            <span className={`provider-pill ${activeModule.provider}`}>{activeModule.provider}</span>
+            <div className="hero-tags">
+              <span className={`provider-pill ${activeModule.provider}`}>{activeModule.provider}</span>
+              <LocalLabBadge localLab={activeModule.localLab} />
+            </div>
             <h1>{activeModule.title}</h1>
             <p>{activeModule.objectives.join(" • ")}</p>
             <p className="lesson-path">Lesson file: {activeModule.lessonPath}</p>
@@ -232,6 +236,8 @@ function LearningPortal() {
             <span>Next module</span>
           </div>
         </section>
+
+        <LocalLabPanel localLab={activeModule.localLab} />
 
         <section className="lesson-layout">
           <article className="lesson-card">

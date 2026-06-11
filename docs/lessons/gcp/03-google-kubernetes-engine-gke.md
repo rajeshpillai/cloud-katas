@@ -41,6 +41,19 @@ GKE Autopilot bills per pod CPU/memory request; Standard bills per node. A small
 
 ## Lab
 
+> ### Run locally with floci
+>
+> **Partly local.** A [kind](https://kind.sigs.k8s.io/) cluster stands in for GKE and the local registry (`localhost:5001`) for Artifact Registry.
+>
+> ```bash
+> ./labs/lab.sh up        # creates the "cloud-katas" kind cluster + local registry
+> kubectl config use-context kind-cloud-katas
+> ```
+>
+> Replace `gcloud container clusters create …` with the harness cluster above. Instead of pushing to Artifact Registry, tag and push to the local registry (`docker tag cloud-katas-sample:v1 localhost:5001/cloud-katas-sample:v1 && docker push localhost:5001/cloud-katas-sample:v1`) and reference that image in your manifests. Reach the Service with a NodePort or `kubectl port-forward`.
+>
+> **Not emulated locally:** Workload Identity token exchange and managed (cloud) load balancers.
+
 ### 1. Prepare
 
 Activate the course configuration and set variables.

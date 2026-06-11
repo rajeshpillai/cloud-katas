@@ -39,6 +39,19 @@ No additional cost beyond the running cluster. Each broken deployment is torn do
 
 ## Lab
 
+> ### Run locally with floci
+>
+> **Partly local.** The pod-level failure scenarios reproduce in a [kind](https://kind.sigs.k8s.io/) cluster, no AWS account needed.
+>
+> ```bash
+> ./labs/lab.sh up        # creates the "cloud-katas" kind cluster
+> kubectl config use-context kind-cloud-katas
+> ```
+>
+> Scenarios A–D (ImagePullBackOff, CrashLoopBackOff via `CRASH_ON_START`, OOMKilled via `MEMORY_HOG_MB`, Pending) run in kind unchanged using the sample app's failure flags.
+>
+> **Not emulated locally:** the unhealthy NLB target-group scenario and VPC CNI IP exhaustion are AWS-specific and simulate-only.
+
 ### 1. Prepare
 
 ```bash

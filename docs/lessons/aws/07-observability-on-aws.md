@@ -39,6 +39,20 @@ CloudWatch Logs charges per GB ingested and stored. CloudWatch Container Insight
 
 ## Lab
 
+> ### Run locally with floci
+>
+> **Partly local.** Workloads run in [kind](https://kind.sigs.k8s.io/) while CloudWatch Logs/Metrics and alarms run against the [floci](https://github.com/floci-io/floci) AWS emulator.
+>
+> ```bash
+> ./labs/lab.sh up        # floci + "cloud-katas" kind cluster
+> source labs/env.sh
+> kubectl config use-context kind-cloud-katas
+> ```
+>
+> Drive traffic against the sample app in kind, then create log groups, run metric queries, and set a metric alarm against floci's CloudWatch APIs.
+>
+> **Not emulated locally:** X-Ray, Container Insights, Managed Prometheus (AMP), and Managed Grafana (AMG) are simulate-only.
+
 ### 1. Prepare
 
 ```bash

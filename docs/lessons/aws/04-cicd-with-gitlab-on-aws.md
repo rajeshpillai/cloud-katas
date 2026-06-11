@@ -41,6 +41,20 @@ GitLab shared runners are free up to a monthly minute budget for most accounts. 
 
 ## Lab
 
+> ### Run locally with floci
+>
+> **Partly local.** The STS and image-registry steps run against [floci](https://github.com/floci-io/floci) + the local registry, and deploys land in [kind](https://kind.sigs.k8s.io/).
+>
+> ```bash
+> ./labs/lab.sh up        # floci + local registry + "cloud-katas" kind cluster
+> source labs/env.sh
+> kubectl config use-context kind-cloud-katas
+> ```
+>
+> Exercise the build → push (`localhost:5001`) → deploy-to-kind flow locally, and use `aws sts …` against floci for the credential-exchange shape.
+>
+> **Not emulated locally:** the GitLab IAM OIDC identity provider — the federation/trust-policy steps cannot be exercised locally; review them conceptually.
+
 ### 1. Prepare
 
 ```bash

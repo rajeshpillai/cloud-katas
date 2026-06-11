@@ -28,6 +28,17 @@ Explain what the learner will build or practice and why it matters.
 
 ## Lab
 
+> ### Run locally with floci
+>
+> Optional, but include it whenever the lab can run against the local emulators (see `labs/`). State how runnable it is (fully / partly local), the setup commands, any endpoint overrides, and what is **not** emulated. Keep the module's `localLab` entry in `frontend/src/data/modules.ts` in sync with this block.
+>
+> ```bash
+> ./labs/lab.sh up        # floci (AWS) + floci-gcp + kind, as needed
+> source labs/env.sh      # points aws/gcloud/SDKs at the emulators
+> ```
+>
+> **Not emulated locally:** list the steps that still require a real account.
+
 ### 1. Prepare
 
 Set variables, confirm tooling, verify account access, and identify any cost-bearing resources before creating them.

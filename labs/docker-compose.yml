@@ -1,0 +1,42 @@
+# Local cloud emulators for the Cloud Katas hands-on labs.
+#
+# Brought up by ../labs/lab.sh (do not run cluster creation here; kind is a
+# separate CLI driven by lab.sh). This file only owns the long-lived service
+# emulators and the local image registry.
+#
+#   floci      - AWS emulator     -> http://localhost:4566  (AWS_ENDPOINT_URL)
+#   floci-gcp  - GCP emulator     -> http://localhost:4588  (*_EMULATOR_HOST)
+#   registry   - local image repo -> localhost:5001         (kind pushes here)
+#
+# No authentication is required by either emulator. See env.sh for the
+# variables that point the aws/gcloud CLIs and SDKs at these endpoints.
+
+services:
+  floci:
+    image: floci/floci:latest
+    container_name: katas-floci
+    ports:
+      - "4566:4566"
+    restart: unless-stopped
+
+  floci-gcp:
+    image: floci/floci-gcp:latest
+    container_name: katas-floci-gcp
+    ports:
+      - "4588:4588"
+    restart: unless-stopped
+
+  # Local OCI registry so the kind-based labs can push/pull images without a
+  # cloud registry (Artifact Registry / ECR). Connected to the kind network by
+  # lab.sh after the cluster is created.
+  registry:
+    image: registry:2
+    container_name: katas-registry
+    ports:
+      - "5001:5000"
+    restart: unless-stopped
+    volumes:
+      - registry-data:/var/lib/registry
+
+volumes:
+  registry-data:
