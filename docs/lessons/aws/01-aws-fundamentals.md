@@ -17,6 +17,11 @@ The habit goal mirrors the GCP fundamentals lesson: know which account you are i
 - AWS CLI v2 installed (`aws --version` shows 2.x)
 - A web browser for the console steps
 
+> **Background you need (brush-up):** New to any of these? Skim the linked primer — the lab won't stop to explain them.
+>
+> - [Identity & IAM](../primers/identity-and-iam.md) — the IAM model, reading an ARN, and how Organizations/SCPs cap permissions (this whole lesson).
+> - [CLI & data formats](../primers/cli-and-data-formats.md) — shell env vars, `$(...)`, and the `--query` (JMESPath) filters used in every command.
+
 ## Cost Notice
 
 This lesson creates no billable infrastructure. Budgets are free; IAM and Organizations queries are free. Costs appear later only when other lessons launch compute, storage, or networking.

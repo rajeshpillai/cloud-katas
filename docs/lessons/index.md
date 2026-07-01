@@ -2,6 +2,14 @@
 
 This folder contains one lesson file for each module in the cloud learning path. Each lesson follows the same structure: overview, prerequisites, objectives, core concepts, lab, validation, troubleshooting, cleanup, and further reading.
 
+## Fundamentals Primers
+
+New to cloud, networking, or IAM? Start with — or brush up from — the [primers](primers/index.md). Each lesson's **"Background you need"** box links to the relevant one, so you never hit a lab that assumes something you haven't seen.
+
+- [Networking Fundamentals](primers/networking.md) — CIDR, subnets, ports, NAT, firewalls.
+- [Identity & IAM](primers/identity-and-iam.md) — principals, ARNs, service accounts, OIDC/federation.
+- [CLI & Data Formats](primers/cli-and-data-formats.md) — shell, JSON/YAML, jsonpath, base64.
+
 ## GCP Sequence
 
 1. [GCP Fundamentals](gcp/01-gcp-fundamentals.md): create a safe project, CLI profile, budget guardrail, and quota baseline.

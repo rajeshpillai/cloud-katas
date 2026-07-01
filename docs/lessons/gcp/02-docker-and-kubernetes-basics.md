@@ -18,6 +18,11 @@ The sample app at [../sample-app/](../sample-app/) is the workload you will depl
 - A local Kubernetes cluster such as Docker Desktop Kubernetes, kind, minikube, or k3d
 - About 2 GB of free memory for the local cluster
 
+> **Background you need (brush-up):** New to any of these? Skim the linked primer — the lab won't stop to explain them.
+>
+> - [CLI & data formats](../primers/cli-and-data-formats.md) — YAML (indentation matters), the container/target/service **port** trio, `base64` (Secrets are encoded, not encrypted), heredocs, and kubeconfig/context.
+> - [Networking fundamentals](../primers/networking.md) — ports and the `podSelector`/ingress fields when you reach the NetworkPolicy step.
+
 ## Cost Notice
 
 This lesson runs everything locally. No cloud resources are created and there is no cloud cost. You will use the same workload on GKE in a later lesson.

@@ -13,6 +13,13 @@ Explain what the learner will build or practice and why it matters.
 - Required previous lessons
 - Required local tools
 - Required cloud account access
+- Assumed background knowledge (link the relevant [primers](primers/index.md))
+
+> **Background you need (brush-up):** New to any of these? Skim the linked primer first — the lab won't stop to explain them.
+>
+> - [Concept](primers/networking.md) — where it shows up in this lesson
+>
+> Keep this box focused on the fundamentals this specific lesson leans on; drop the primers it doesn't use. Paths are relative to the lesson file, e.g. `../primers/networking.md` from `aws/` or `gcp/`.
 
 ## Learning Objectives
 

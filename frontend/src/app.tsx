@@ -3,6 +3,8 @@ import { BookOpen, CheckCircle2, Github, Moon, PanelLeftClose, PanelLeftOpen, Ro
 import { Link, Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { MermaidDiagram } from "./components/mermaid-diagram";
 import { LessonContent } from "./components/lesson-content";
+import { PrimerPage } from "./components/primer-page";
+import { StatusBar } from "./components/status-bar";
 import { ModuleNav } from "./components/module-nav";
 import { ProgressMeter } from "./components/progress-meter";
 import { LocalLabBadge, LocalLabPanel } from "./components/local-lab-panel";
@@ -25,11 +27,15 @@ function getInitialTheme(): Theme {
 
 export function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Navigate to={`/modules/${modules[0].slug}`} replace />} />
-      <Route path="/modules/:slug" element={<LearningPortal />} />
-      <Route path="*" element={<Navigate to={`/modules/${modules[0].slug}`} replace />} />
-    </Routes>
+    <div className="app-root">
+      <Routes>
+        <Route path="/" element={<Navigate to={`/modules/${modules[0].slug}`} replace />} />
+        <Route path="/modules/:slug" element={<LearningPortal />} />
+        <Route path="/primers/:name" element={<PrimerPage />} />
+        <Route path="*" element={<Navigate to={`/modules/${modules[0].slug}`} replace />} />
+      </Routes>
+      <StatusBar />
+    </div>
   );
 }
 
@@ -306,7 +312,7 @@ function LearningPortal() {
             <h2>Full Lesson Content</h2>
           </div>
           {lessonLoading ? <p className="muted">Loading lesson...</p> : null}
-          {!lessonLoading && lessonContent ? <LessonContent content={lessonContent} /> : null}
+          {!lessonLoading && lessonContent ? <LessonContent content={lessonContent} basePath={activeModule.lessonPath} /> : null}
           {!lessonLoading && !lessonContent ? <p className="muted">Lesson content is not available yet.</p> : null}
         </section>
 

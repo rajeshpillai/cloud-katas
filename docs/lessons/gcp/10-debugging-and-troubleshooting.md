@@ -17,6 +17,11 @@ The point is not to memorize commands but to internalize the order: events first
 - `kubectl` configured for that cluster
 - The sample app image available to the cluster (locally loaded or pushed to a reachable registry)
 
+> **Background you need (brush-up):** New to any of these? Skim the linked primer — the lab won't stop to explain them.
+>
+> - [CLI & data formats](../primers/cli-and-data-formats.md) — `-o jsonpath` and `yq` (used to extract pod status), and heredocs for `kubectl apply -f -`.
+> - Resource **requests vs limits** (request = scheduler reservation; limit = the OOM ceiling) drive the `OOMKilled`/`Pending` scenarios — see [GKE](03-google-kubernetes-engine-gke.md) and [Docker and Kubernetes Basics](02-docker-and-kubernetes-basics.md).
+
 ## Cost Notice
 
 No additional cloud cost beyond the cluster you are using. Each broken deployment is torn down at the end of its scenario.

@@ -16,6 +16,11 @@ The mental model is the same as the GCP observability lesson: metrics show what 
 - The sample app running on the EKS cluster with the NLB reachable
 - The `cloud-katas` AWS profile authenticated
 
+> **Background you need (brush-up):** New to any of these? Skim the linked primer — the lab won't stop to explain them.
+>
+> - [CLI & data formats](../primers/cli-and-data-formats.md) — the OTel collector's YAML, `-o jsonpath`, and the log-query/regex syntax in Logs Insights.
+> - [Identity & IAM](../primers/identity-and-iam.md) — IRSA, which grants the collector its permissions.
+
 ## Cost Notice
 
 CloudWatch Logs charges per GB ingested and stored. CloudWatch Container Insights adds ingestion cost based on cluster size; for this lab it is small. X-Ray free tier covers the first 100k traces/month.
@@ -177,21 +182,23 @@ kubectl wait -n opentelemetry-operator-system --for=condition=Available deployme
 Create an ADOT collector instance that forwards to X-Ray:
 
 ```yaml
-apiVersion: opentelemetry.io/v1alpha1
+# v1beta1 is the current CRD version; note `config` is a structured map here,
+# not the string (`config: |`) the older v1alpha1 used. Empty blocks need `{}`.
+apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector
 metadata:
   name: adot
   namespace: sample
 spec:
   mode: deployment
-  config: |
+  config:
     receivers:
       otlp:
         protocols:
-          grpc:
-          http:
+          grpc: {}
+          http: {}
     processors:
-      batch:
+      batch: {}
     exporters:
       awsxray:
         region: us-east-1

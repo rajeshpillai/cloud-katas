@@ -16,6 +16,12 @@ The mental model is layered. IAM controls who can do what at the API boundary. W
 - Either the GKE cluster from [03-google-kubernetes-engine-gke.md](03-google-kubernetes-engine-gke.md) or a local cluster for the Workload Identity demo
 - Permission to administer IAM, Secret Manager, KMS, and audit log settings in the project
 
+> **Background you need (brush-up):** New to any of these? Skim the linked primer — the lab won't stop to explain them.
+>
+> - [Identity & IAM](../primers/identity-and-iam.md) — member strings (`user:`/`serviceAccount:`), bindings, Google-managed service agents, and Workload Identity.
+> - [CLI & data formats](../primers/cli-and-data-formats.md) — stdin (`--data-file=-`), `base64`, and the Logs Explorer filter syntax (`protoPayload.methodName="…"`).
+> - KMS uses **envelope encryption** — a key that never leaves KMS wraps a data key that encrypts your data. This lesson's Core Concepts explains it; you only need the intuition "encrypt the key with another key."
+
 ## Cost Notice
 
 KMS keys and Secret Manager secrets have small per-version monthly fees. Audit log review is free. If you do not run the GKE workload, no cluster cost applies.

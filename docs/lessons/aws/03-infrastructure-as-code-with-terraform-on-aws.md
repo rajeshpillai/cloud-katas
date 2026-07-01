@@ -2,9 +2,9 @@
 
 ## Overview
 
-This lesson translates the Terraform habits from the GCP track to AWS. You will set up an S3 + DynamoDB remote backend (the lock table is the entire point, not an afterthought), build a multi-file configuration with variables, outputs, and a small module, and demonstrate that concurrent applies are correctly blocked by the lock.
+This lesson translates the Terraform habits from the GCP track to AWS. You will set up an S3 remote backend with **state locking** (the lock is the entire point, not an afterthought), build a multi-file configuration with variables, outputs, and a small module, and demonstrate that concurrent applies are correctly blocked by the lock.
 
-The cross-cloud transfer is direct: the workflow is identical, the backend mechanics differ. GCS uses object versioning for locking; AWS uses a DynamoDB item for the lock. Get the DynamoDB table wrong and your team will eventually corrupt state.
+The cross-cloud transfer is direct: the workflow is identical, the backend mechanics differ. This lab locks state with a **DynamoDB table**, because the lock is observable (you can `scan` it) and it runs end-to-end against the local emulator. Note as you go that Terraform 1.10+ also supports **native S3 locking** (`use_lockfile = true`) with no extra table — that is the default you should reach for in new real-world projects; the DynamoDB pattern shown here is what you will meet in most existing codebases.
 
 ## Estimated Time
 
@@ -16,6 +16,12 @@ The cross-cloud transfer is direct: the workflow is identical, the backend mecha
 - Terraform 1.6+ installed
 - AWS CLI v2 with the `cloud-katas` profile
 - Permission to create S3 buckets, DynamoDB tables, and IAM resources
+
+> **Background you need (brush-up):** New to any of these? Skim the linked primer — the lab won't stop to explain them.
+>
+> - [CLI & data formats](../primers/cli-and-data-formats.md) — shell variables and `$(...)`, JSON policy documents, and `file://` arguments.
+> - [Identity & IAM](../primers/identity-and-iam.md) — the IAM roles/policies Terraform creates and what `assume_role` means.
+> - Comfort with Terraform/HCL blocks (`resource`, `variable`, `output`, `module`) — from [Infrastructure as Code with Terraform](../gcp/04-infrastructure-as-code-with-terraform.md).
 
 ## Cost Notice
 
@@ -104,6 +110,8 @@ aws s3api put-bucket-encryption \
     '{"Rules":[{"ApplyServerSideEncryptionByDefault":{"SSEAlgorithm":"AES256"}}]}'
 ```
 
+> **Modern alternative:** Terraform ≥1.10 can lock natively in S3 with `use_lockfile = true` (it writes a `.tflock` object next to the state via S3 conditional writes) and needs no DynamoDB table at all. This lab uses DynamoDB because the lock is observable and the local emulator supports it; for new real infrastructure, prefer `use_lockfile`.
+
 Create the DynamoDB lock table. The primary key must be named `LockID` and be a string — Terraform's S3 backend hard-codes this.
 
 ```bash
@@ -137,7 +145,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = "~> 5.0" # provider 6.x is current; bump when you're ready to test the upgrade
     }
   }
 
@@ -146,6 +154,8 @@ terraform {
     region         = "us-east-1"
     encrypt        = true
     dynamodb_table = "terraform-locks"
+    # Modern alternative (Terraform >= 1.10): drop dynamodb_table and set
+    # use_lockfile = true  # native S3 state locking, no DynamoDB table needed
   }
 }
 ```

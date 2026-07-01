@@ -17,6 +17,11 @@ The pattern mirrors the GCP version of this lesson but with AWS-native trust glu
 - A GitLab account and the ability to create a project under a known group path
 - `aws` and `kubectl` authenticated locally
 
+> **Background you need (brush-up):** New to any of these? Skim the linked primer — the lab won't stop to explain them.
+>
+> - [Identity & IAM](../primers/identity-and-iam.md) — OIDC federation, JWT claims (`sub`/`aud`), and trust policies. The keyless-CI trust glue rests entirely on this.
+> - [CLI & data formats](../primers/cli-and-data-formats.md) — YAML anchors (`&`/`*`), `jq`, env vars in CI, and Docker-in-Docker.
+
 ## Cost Notice
 
 GitLab shared runners are free up to a monthly minute budget for most accounts. ECR storage costs cents per month for this lab. EKS continues to bill while the cluster runs.
@@ -77,13 +82,10 @@ aws ecr describe-repositories --repository-names cloud-katas-sample
 ```bash
 aws iam create-open-id-connect-provider \
   --url https://gitlab.com \
-  --client-id-list https://gitlab.com \
-  --thumbprint-list b3dd7606d2b5a8b4a13771dbecc9ee1cecafa38a 2>&1 | head -5
-
-# Use the thumbprint from gitlab.com's certificate if AWS does not accept the canned one:
-# echo | openssl s_client -servername gitlab.com -showcerts -connect gitlab.com:443 2>/dev/null \
-#   | openssl x509 -fingerprint -sha1 -noout
+  --client-id-list https://gitlab.com 2>&1 | head -5
 ```
+
+> **No thumbprint needed anymore.** Since 2023 AWS validates the OIDC token signature against the provider's TLS certificate chain for IdPs served by a well-known CA (like gitlab.com), so `--thumbprint-list` is optional and effectively ignored here — don't paste a hard-coded fingerprint that will rot. You only need a thumbprint for a self-hosted IdP with a private CA; get it with `openssl s_client -servername HOST -connect HOST:443 | openssl x509 -fingerprint -sha1 -noout`.
 
 The provider ARN follows a predictable shape:
 
@@ -128,14 +130,21 @@ aws iam attach-role-policy --role-name gitlab-ci-deploy \
 aws iam attach-role-policy --role-name gitlab-ci-deploy \
   --policy-arn arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
 
-# Give the role kubectl access via the cluster's aws-auth ConfigMap (lesson-02 cluster)
-eksctl create iamidentitymapping \
-  --cluster "$CLUSTER_NAME" \
-  --region "$AWS_REGION" \
-  --arn "arn:aws:iam::$ACCOUNT_ID:role/gitlab-ci-deploy" \
-  --username gitlab-deployer \
-  --group system:masters
+# Give the role kubectl access via an EKS access entry (the modern replacement for
+# editing the aws-auth ConfigMap). Requires the cluster's auth mode to include the API,
+# i.e. API or API_AND_CONFIG_MAP — new clusters default to API_AND_CONFIG_MAP.
+aws eks create-access-entry \
+  --cluster-name "$CLUSTER_NAME" --region "$AWS_REGION" \
+  --principal-arn "arn:aws:iam::$ACCOUNT_ID:role/gitlab-ci-deploy"
+
+aws eks associate-access-policy \
+  --cluster-name "$CLUSTER_NAME" --region "$AWS_REGION" \
+  --principal-arn "arn:aws:iam::$ACCOUNT_ID:role/gitlab-ci-deploy" \
+  --policy-arn arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy \
+  --access-scope type=cluster
 ```
+
+> If the cluster still runs in `CONFIG_MAP`-only mode (some older `eksctl` clusters), either switch it with `aws eks update-cluster-config --name "$CLUSTER_NAME" --access-config authenticationMode=API_AND_CONFIG_MAP`, or fall back to the legacy `eksctl create iamidentitymapping --arn … --group system:masters`.
 
 > Use `system:masters` only for the sandbox. In production, bind to a custom RBAC group with narrow Role/RoleBinding permissions on the target namespace.
 
@@ -193,12 +202,15 @@ test:
 
 build:
   stage: build
-  image: docker:24
+  image: docker:27
   services:
-    - docker:24-dind
+    - docker:27-dind
   variables:
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_TLS_CERTDIR: ""
+    # TLS-secured Docker-in-Docker (the recommended pattern; avoids the old insecure 2375 socket)
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: "/certs"
+    DOCKER_TLS_VERIFY: "1"
+    DOCKER_CERT_PATH: "/certs/client"
   before_script:
     - apk add --no-cache aws-cli jq
     - *aws_auth
@@ -223,7 +235,7 @@ scan:
 
 deploy:
   stage: deploy
-  image: alpine:3.19
+  image: alpine:3.21
   needs:
     - job: build
       artifacts: true
@@ -234,7 +246,7 @@ deploy:
     - if: $CI_COMMIT_BRANCH == "main"
   before_script:
     - apk add --no-cache aws-cli jq curl
-    - curl -LO https://dl.k8s.io/release/v1.30.0/bin/linux/amd64/kubectl
+    - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
     - install kubectl /usr/local/bin/kubectl
     - *aws_auth
     - aws eks update-kubeconfig --name "$EKS_CLUSTER" --region "$AWS_REGION"
@@ -288,19 +300,19 @@ Success means:
 
 ## Troubleshooting
 
-- `AccessDenied: Not authorized to perform sts:AssumeRoleWithWebIdentity`: The trust policy `sub` condition does not match. Print `$CI_JOB_JWT` (carefully) and compare its `sub` claim to your `StringLike` pattern.
+- `AccessDenied: Not authorized to perform sts:AssumeRoleWithWebIdentity`: The trust policy `sub` condition does not match. Decode the job's `id_tokens` token (the predefined `$CI_JOB_JWT` was removed in GitLab 16.0 — use your configured `id_tokens` variable) and compare its `sub` claim to your `StringLike` pattern, e.g. `echo "$AWS_ID_TOKEN" | cut -d. -f2 | base64 -d`.
 - `InvalidIdentityToken`: The `aud` in `id_tokens` must equal `https://gitlab.com` exactly. AWS rejects mismatched audiences.
 - ECR `unauthorized`: `aws ecr get-login-password` must run *after* `assume-role-with-web-identity` exports credentials.
-- kubectl `Unauthorized`: The role ARN was not added to `aws-auth`. Re-run `eksctl create iamidentitymapping`. Confirm with `kubectl describe configmap aws-auth -n kube-system`.
+- kubectl `Unauthorized`: The role has no cluster access. Confirm the access entry with `aws eks list-access-entries --cluster-name "$CLUSTER_NAME"` (or, on a legacy `CONFIG_MAP` cluster, that the ARN is in `aws-auth`).
 - Pipeline hangs at deploy: The protected environment requires approval. Approve in the GitLab UI.
 
 ## Cleanup
 
 ```bash
-eksctl delete iamidentitymapping \
-  --cluster "$CLUSTER_NAME" \
-  --region "$AWS_REGION" \
-  --arn "arn:aws:iam::$ACCOUNT_ID:role/gitlab-ci-deploy"
+aws eks delete-access-entry \
+  --cluster-name "$CLUSTER_NAME" --region "$AWS_REGION" \
+  --principal-arn "arn:aws:iam::$ACCOUNT_ID:role/gitlab-ci-deploy"
+# (legacy clusters instead: eksctl delete iamidentitymapping --cluster "$CLUSTER_NAME" --arn "arn:aws:iam::$ACCOUNT_ID:role/gitlab-ci-deploy")
 
 aws iam detach-role-policy --role-name gitlab-ci-deploy --policy-arn arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser
 aws iam detach-role-policy --role-name gitlab-ci-deploy --policy-arn arn:aws:iam::aws:policy/AmazonEKSClusterPolicy

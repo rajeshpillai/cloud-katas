@@ -17,6 +17,12 @@ The cross-cloud focus is IRSA — AWS's equivalent of GKE Workload Identity. If 
 - The `cloud-katas` AWS profile configured and authenticated
 - About 30 minutes of patience for the cluster to come up
 
+> **Background you need (brush-up):** New to any of these? Skim the linked primer — the lab won't stop to explain them.
+>
+> - [Identity & IAM](../primers/identity-and-iam.md) — service accounts, and the OIDC/JWT/`sub`/`aud` model behind IRSA (section 5 is unreadable without it).
+> - [CLI & data formats](../primers/cli-and-data-formats.md) — YAML manifests, `kubectl -o jsonpath`, and heredocs.
+> - Kubernetes objects (pod, Deployment, Service, ServiceAccount, namespace): if these are new, do [Docker and Kubernetes Basics](../gcp/02-docker-and-kubernetes-basics.md) first.
+
 ## Cost Notice
 
 EKS bills $0.10/hour for the cluster control plane plus the cost of any nodes or Fargate pods. A two-node `t3.small` cluster running this lab costs a small handful of US dollars per day. Tear it down at the end.
@@ -73,7 +79,7 @@ Confirm the required IAM permissions. `eksctl` needs broad permissions: EC2, IAM
 eksctl create cluster \
   --name "$CLUSTER_NAME" \
   --region "$AWS_REGION" \
-  --version "1.30" \
+  --version "1.33" \
   --node-type t3.small \
   --nodes 2 \
   --nodes-min 1 \
@@ -81,6 +87,8 @@ eksctl create cluster \
   --managed \
   --with-oidc
 ```
+
+> **Pick a supported version.** Use a Kubernetes version that is currently in EKS standard support — `1.33` is an example, not a fixed target. List what's available with `aws eks describe-cluster-versions --query 'clusterVersions[].clusterVersion'` (older majors like 1.30 have left standard support and cost more under extended support).
 
 `--with-oidc` is the critical flag — it creates the OIDC identity provider IRSA depends on. The command takes ~15-20 minutes. Read sections 3 and 4 while you wait.
 
@@ -329,7 +337,8 @@ To upgrade an addon to a newer compatible version:
 
 ```bash
 aws eks describe-addon-versions --addon-name vpc-cni \
-  --kubernetes-version 1.30 --query 'addons[0].addonVersions[0:3].addonVersion'
+  --kubernetes-version "$(aws eks describe-cluster --name "$CLUSTER_NAME" --query 'cluster.version' --output text)" \
+  --query 'addons[0].addonVersions[0:3].addonVersion'
 # aws eks update-addon --cluster-name "$CLUSTER_NAME" --addon-name vpc-cni --addon-version vX.Y.Z-eksbuild.N
 ```
 
@@ -360,7 +369,7 @@ Success means:
 
 ## Troubleshooting
 
-- `Unauthorized` from kubectl: Update kubeconfig with `aws eks update-kubeconfig --name "$CLUSTER_NAME" --region "$AWS_REGION"`. Confirm `aws sts get-caller-identity` matches the principal listed in the cluster's `aws-auth` ConfigMap.
+- `Unauthorized` from kubectl: Update kubeconfig with `aws eks update-kubeconfig --name "$CLUSTER_NAME" --region "$AWS_REGION"`. Confirm `aws sts get-caller-identity` matches a principal that has cluster access. Modern EKS grants that access with **access entries** (`aws eks list-access-entries --cluster-name "$CLUSTER_NAME"`), which have largely replaced the older `aws-auth` ConfigMap; new clusters default to the `API_AND_CONFIG_MAP` mode that honors both. Prefer `aws eks create-access-entry` + `aws eks associate-access-policy` over editing `aws-auth` by hand.
 - NLB `EXTERNAL-IP` stays empty: Check the AWS Load Balancer Controller pods (if installed) or fall back to the in-tree NLB by removing the annotations. NLB takes 2-3 minutes to become healthy.
 - IRSA does not work: Verify the trust policy uses `$OIDC_ISSUER` exactly (no `https://` prefix). The `sub` must match `system:serviceaccount:NAMESPACE:KSA` exactly.
 - `ImagePullBackOff` from ECR: The node IAM role needs `AmazonEC2ContainerRegistryReadOnly`. `eksctl create cluster` attaches it by default; if you customized the node group, re-attach.

@@ -17,6 +17,12 @@ The goal is not to memorize every GCP service. The goal is to build the habits t
 - `gcloud` CLI installed
 - Optional: access to an organization or folder if you are working in a company-owned Google Cloud environment
 
+> **Background you need (brush-up):** New to any of these? Skim the linked primer — the lab won't stop to explain them.
+>
+> - [Identity & IAM](../primers/identity-and-iam.md) — members, roles, bindings, and how org/folder policy caps a project (the IAM section).
+> - [CLI & data formats](../primers/cli-and-data-formats.md) — shell variables and the JSON used for the budget definition.
+> - Networking terms (IP, CIDR) aren't needed yet — they're covered in [Networking in GCP](08-networking-in-gcp.md).
+
 ## Cost Notice
 
 This lesson should create little to no billable infrastructure. Budgets and IAM checks are free. Costs can appear later if you enable resources in the selected project, so create a budget before moving on.

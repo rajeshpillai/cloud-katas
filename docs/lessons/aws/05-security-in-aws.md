@@ -16,6 +16,11 @@ The model mirrors GCP's: IAM at the API boundary, IRSA (or Pod Identity) for run
 - Either the EKS cluster from [02-amazon-eks-elastic-kubernetes-service.md](02-amazon-eks-elastic-kubernetes-service.md) or a willingness to skip the IRSA cross-reference
 - Permission to inspect IAM, CloudTrail, Secrets Manager, and KMS in the account
 
+> **Background you need (brush-up):** New to any of these? Skim the linked primer — the lab won't stop to explain them.
+>
+> - [Identity & IAM](../primers/identity-and-iam.md) — IAM policy evaluation (explicit Deny wins), ARNs, and IRSA.
+> - [CLI & data formats](../primers/cli-and-data-formats.md) — JSON policy documents, `base64`, `fileb://`, and stdin (`-`) used in the KMS encrypt/decrypt round-trip.
+
 ## Cost Notice
 
 KMS keys cost $1/month per key plus per-request fees. Secrets Manager charges $0.40/month per secret plus per-API fees. GuardDuty has a 30-day free trial. The total for the lab is under $5 if cleaned up promptly.

@@ -16,6 +16,11 @@ The point is to understand what each piece is responsible for and how packets ac
 - Permission to create VPCs, subnets, firewall rules, and Cloud Router in the project
 - `gcloud` authenticated and the `cloud-katas` configuration active
 
+> **Background you need (brush-up):** This lesson is built on networking fundamentals it does not stop to teach.
+>
+> - [Networking fundamentals](../primers/networking.md) — **read this first if any of CIDR/`/16`/`/24`/`/20`, public vs private IP (RFC 1918), ports, NAT, routing, firewall rules, or secondary/alias ranges are fuzzy.** Every section depends on it.
+> - [CLI & data formats](../primers/cli-and-data-formats.md) — capturing values with `$(...)` and the `--format` filters.
+
 ## Cost Notice
 
 VPCs, subnets, and firewall rules are free. Cloud NAT charges per-VM-hour and per-GB. A small lab is cents-per-hour; remember to destroy it. Load balancer forwarding rules and Cloud Armor have small per-hour and per-request fees.

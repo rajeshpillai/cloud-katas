@@ -834,3 +834,107 @@ button {
     padding: 22px;
   }
 }
+
+/* Global status bar (fixed to the bottom of the viewport) */
+.app-root {
+  min-height: 100vh;
+}
+
+.status-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 30px;
+  padding: 0 16px;
+  border-top: 1px solid var(--line);
+  background: var(--sidebar);
+  color: var(--text-soft);
+  font-size: 0.76rem;
+}
+
+.status-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.status-copyright {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+
+.status-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+.status-sep {
+  opacity: 0.6;
+}
+
+.status-version {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.status-date {
+  color: var(--text-soft);
+}
+
+.status-bar-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-soft);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+.status-bar-link:hover {
+  color: var(--ink);
+}
+
+.status-bar-link svg {
+  flex: 0 0 auto;
+}
+
+/* Reserve space so page content is never hidden behind the fixed bar */
+.sidebar {
+  padding-bottom: 46px;
+}
+
+.content {
+  padding-bottom: 62px;
+}
+
+@media (max-width: 700px) {
+  .status-copyright {
+    white-space: normal;
+  }
+
+  .status-bar-link span {
+    display: none;
+  }
+}

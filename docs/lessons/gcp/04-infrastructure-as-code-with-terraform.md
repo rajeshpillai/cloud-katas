@@ -17,6 +17,11 @@ The goal is to leave with a habit, not just commands: never apply without review
 - `gcloud` authenticated and the `cloud-katas` configuration active
 - `gcloud auth application-default login` already run so Terraform can use ADC
 
+> **Background you need (brush-up):** New to any of these? Skim the linked primer — the lab won't stop to explain them.
+>
+> - [Identity & IAM](../primers/identity-and-iam.md) — what Application Default Credentials (ADC) are and how they differ from your user login, so you know *why* Terraform needs the `application-default login`.
+> - [CLI & data formats](../primers/cli-and-data-formats.md) — shell heredocs and variable expansion (used to write `terraform.tfvars`), plus HCL vs JSON/YAML.
+
 ## Cost Notice
 
 A GCS bucket has a free tier suitable for this lab. Storing a few KB of state and a few small test objects costs effectively nothing. The bucket can be deleted at the end with `terraform destroy`.

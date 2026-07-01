@@ -16,6 +16,12 @@ GitOps changes the operating model: instead of imperatively pushing changes with
 - A Kubernetes cluster: GKE from [03-google-kubernetes-engine-gke.md](03-google-kubernetes-engine-gke.md), kind, or minikube
 - `kubectl` configured for that cluster
 - A GitHub or GitLab account and the ability to create a public repository for the lab
+- Comfort with basic Git (`clone`, `add`, `commit`, `push`, `revert`) — this whole lesson drives a cluster from a Git repo
+
+> **Background you need (brush-up):** New to any of these? Skim the linked primer — the lab won't stop to explain them.
+>
+> - [CLI & data formats](../primers/cli-and-data-formats.md) — YAML manifests, `base64 -d` (to read the admin secret), and `kubectl port-forward`.
+> - Argo CD's `Application` is a **CRD** (a custom Kubernetes object type Argo installs); the `https://localhost:8080` cert warning is its self-signed TLS — `--insecure` is lab-only.
 
 ## Cost Notice
 

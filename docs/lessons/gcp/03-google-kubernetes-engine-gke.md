@@ -16,7 +16,13 @@ The goal is to move from the local cluster in [02-docker-and-kubernetes-basics.m
 - A GCP project with billing enabled
 - `gcloud` authenticated and the `cloud-katas` configuration active
 - `kubectl` installed
-- The GKE auth plugin: `gcloud components install gke-gcloud-auth-plugin`
+- The GKE auth plugin — bundled with recent Cloud SDK, so usually already present. Verify with `gke-gcloud-auth-plugin --version`; only if that fails, run `gcloud components install gke-gcloud-auth-plugin`. (The old `USE_GKE_GCLOUD_AUTH_PLUGIN` env var is no longer needed.)
+
+> **Background you need (brush-up):** New to any of these? Skim the linked primer — the lab won't stop to explain them.
+>
+> - [Identity & IAM](../primers/identity-and-iam.md) — the GSA-vs-KSA distinction and Workload Identity (`PROJECT.svc.id.goog[ns/ksa]`) that the keyless pod step depends on.
+> - [CLI & data formats](../primers/cli-and-data-formats.md) — `-o jsonpath` and how to read the image URL.
+> - [Networking fundamentals](../primers/networking.md) — external IPs and load balancers, for the Service step.
 
 ## Cost Notice
 

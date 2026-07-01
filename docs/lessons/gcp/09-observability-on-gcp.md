@@ -16,6 +16,11 @@ Most cloud teams already collect data. The skill is asking the right question of
 - The sample app running on GKE with the load balancer reachable
 - `gcloud` authenticated and the `cloud-katas` configuration active
 
+> **Background you need (brush-up):** New to any of these? Skim the linked primer — the lab won't stop to explain them.
+>
+> - [CLI & data formats](../primers/cli-and-data-formats.md) — the Cloud Logging filter syntax (`resource.type="…" AND jsonPayload.x="…"`), shell loops for the load generator, and jsonpath.
+> - HTTP status classes (2xx success, 4xx client error, 5xx server error) drive the SLO — this lesson defines them where used.
+
 ## Cost Notice
 
 Cloud Logging and Monitoring have free tiers that comfortably cover this lab. SLOs are part of Monitoring at no extra cost. Cloud Trace's free quota covers the small volume here.

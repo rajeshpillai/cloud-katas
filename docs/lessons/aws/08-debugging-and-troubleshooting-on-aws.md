@@ -16,6 +16,12 @@ The mental model is identical to the GCP debugging lesson: events first, then de
 - The EKS cluster from lesson 02 still running
 - `kubectl`, `aws` authenticated; CloudWatch Logs Insights queries available
 
+> **Background you need (brush-up):** New to any of these? Skim the linked primer — the lab won't stop to explain them.
+>
+> - [CLI & data formats](../primers/cli-and-data-formats.md) — `-o jsonpath` (used to extract pod status) and heredocs.
+> - [Networking fundamentals](../primers/networking.md) — ENIs and CIDR/IP exhaustion, which sit behind the `Pending` and target-health scenarios.
+> - Pod objects and the ALB target-group link back to [Amazon EKS](02-amazon-eks-elastic-kubernetes-service.md) and [Docker and Kubernetes Basics](../gcp/02-docker-and-kubernetes-basics.md).
+
 ## Cost Notice
 
 No additional cost beyond the running cluster. Each broken deployment is torn down at the end of its scenario.
@@ -58,6 +64,7 @@ No additional cost beyond the running cluster. Each broken deployment is torn do
 export AWS_PROFILE=cloud-katas
 export AWS_REGION="us-east-1"
 export CLUSTER_NAME="learning-eks"
+export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 kubectl create namespace debug 2>/dev/null
 kubectl config set-context --current --namespace=debug
 kubectl get nodes

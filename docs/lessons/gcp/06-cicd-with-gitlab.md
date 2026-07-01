@@ -18,6 +18,11 @@ The recurring theme: production access in CI should come from short-lived tokens
 - An Artifact Registry repository (created in lesson 03)
 - `gcloud` and `kubectl` authenticated locally
 
+> **Background you need (brush-up):** New to any of these? Skim the linked primer — the lab won't stop to explain them.
+>
+> - [Identity & IAM](../primers/identity-and-iam.md) — OIDC/JWT claims (`sub`/`aud`) and **Workload Identity Federation** (`principalSet://…`), which is a *different* mechanism from lesson 03's in-cluster GKE Workload Identity.
+> - [CLI & data formats](../primers/cli-and-data-formats.md) — YAML anchors, Docker-in-Docker, and CI environment variables.
+
 ## Cost Notice
 
 GitLab shared runners are free up to a monthly minute budget for most accounts. Artifact Registry storage and GKE compute continue to bill while the cluster runs.
@@ -169,10 +174,13 @@ build:
   stage: build
   image: google/cloud-sdk:alpine
   services:
-    - docker:dind
+    - docker:27-dind
   variables:
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_TLS_CERTDIR: ""
+    # TLS-secured Docker-in-Docker (the recommended pattern; avoids the old insecure 2375 socket)
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: "/certs"
+    DOCKER_TLS_VERIFY: "1"
+    DOCKER_CERT_PATH: "/certs/client"
   before_script:
     - apk add --no-cache docker-cli
     - *gcloud_auth
@@ -207,7 +215,8 @@ deploy:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
   before_script:
-    - apk add --no-cache kubectl
+    # kubectl-to-GKE needs the auth plugin, not just kubectl — install both from gcloud components
+    - gcloud components install kubectl gke-gcloud-auth-plugin --quiet
     - *gcloud_auth
     - gcloud container clusters get-credentials "$GKE_CLUSTER" --region "$GKE_REGION"
   script:

@@ -16,6 +16,11 @@ The cross-cloud transfer is mostly direct. AWS has a few moving parts GCP does n
 - Permission to create VPC, EC2, and Elastic Load Balancing resources
 - The `cloud-katas` AWS profile authenticated
 
+> **Background you need (brush-up):** This lesson is built on networking fundamentals it does not stop to teach.
+>
+> - [Networking fundamentals](../primers/networking.md) — **read this first if any of CIDR/`/16`/`/24`, public vs private IP, ports, NAT, route tables, or stateful-vs-stateless firewalls are fuzzy.** Every section depends on it.
+> - [CLI & data formats](../primers/cli-and-data-formats.md) — capturing IDs with `$(...)` and the `--query` filters used throughout.
+
 ## Cost Notice
 
 A VPC, subnets, route tables, IGW, and security groups are free. A NAT Gateway costs about $1/day plus data processing. An ALB has a small per-hour fee. Tear down at the end.

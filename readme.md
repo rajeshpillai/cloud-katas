@@ -92,6 +92,26 @@ npm run test:smoke
 
 The smoke suite starts a dedicated Vite dev server and checks routing, module visibility, search, theme persistence, sidebar persistence, lesson rendering, and progress persistence.
 
+## Deploy to GitHub Pages
+
+`scripts/deploy-pages.sh` builds the frontend and publishes `frontend/dist` to a `gh-pages` branch using a temporary git worktree (it never touches your working tree). It also writes `.nojekyll` and relies on `frontend/public/404.html` for SPA deep-link routing (module and primer URLs).
+
+From the repo root:
+
+```bash
+bash scripts/deploy-pages.sh
+```
+
+The default base path is `/cloud-katas/` (for `https://<user>.github.io/cloud-katas/`). Override it and the target branch/remote with environment variables:
+
+```bash
+BASE_PATH=/ bash scripts/deploy-pages.sh              # publish at the site root (custom domain)
+GH_PAGES_BRANCH=docs bash scripts/deploy-pages.sh     # push to a different branch
+GH_PAGES_REMOTE=upstream bash scripts/deploy-pages.sh # push to a different remote
+```
+
+`BASE_PATH` must start and end with `/`. On the first run the script creates an orphan `gh-pages` branch; subsequent runs commit only when the build output changed. After pushing, enable Pages under **Settings → Pages** (source: the `gh-pages` branch). GitHub usually serves the new build within 1–2 minutes.
+
 ## Local Labs (floci)
 
 Most lessons can be run **locally and for free** against the [floci](https://github.com/floci-io) cloud emulators plus a local Kubernetes cluster — no cloud account, no billing. Look for the **"Run locally"** badge and setup panel on a module, or the **"Run locally with floci"** block inside its lesson.
@@ -134,6 +154,7 @@ Lesson source files live in `docs/lessons`.
 
 - `docs/lessons/gcp`: GCP sequence, modules 1-10
 - `docs/lessons/aws`: AWS sequence, modules 11-18
+- `docs/lessons/primers`: fundamentals brush-up docs (networking, identity/IAM, CLI & formats) linked from each lesson's "Background you need" box
 - `docs/lessons/00-template.md`: reusable lesson template
 - `docs/lessons/index.md`: lesson index
 
