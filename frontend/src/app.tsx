@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { BookOpen, CheckCircle2, Github, Moon, PanelLeftClose, PanelLeftOpen, RotateCcw, Search, ShieldCheck, Star, Sun } from "lucide-react";
+import { BookOpen, CheckCircle2, Github, Moon, PanelLeftClose, PanelLeftOpen, RotateCcw, Route as RouteIcon, Search, ShieldCheck, Star, Sun } from "lucide-react";
 import { Link, Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { MermaidDiagram } from "./components/mermaid-diagram";
 import { LessonContent } from "./components/lesson-content";
 import { PrimerPage } from "./components/primer-page";
+import { TrackPage } from "./components/track-page";
 import { StatusBar } from "./components/status-bar";
 import { ModuleNav } from "./components/module-nav";
 import { ProgressMeter } from "./components/progress-meter";
@@ -32,6 +33,7 @@ export function App() {
         <Route path="/" element={<Navigate to={`/modules/${modules[0].slug}`} replace />} />
         <Route path="/modules/:slug" element={<LearningPortal />} />
         <Route path="/primers/:name" element={<PrimerPage />} />
+        <Route path="/tracks/:name" element={<TrackPage />} />
         <Route path="*" element={<Navigate to={`/modules/${modules[0].slug}`} replace />} />
       </Routes>
       <StatusBar />
@@ -181,6 +183,14 @@ function LearningPortal() {
                 {item}
               </button>
             ))}
+          </div>
+
+          <div className="sidebar-tracks">
+            <span className="sidebar-section-label">Tracks</span>
+            <Link className="track-link" to="/tracks/devops">
+              <RouteIcon size={17} aria-hidden="true" />
+              <span>DevOps Track</span>
+            </Link>
           </div>
 
           <ModuleNav modules={filteredModules} activeSlug={activeSlug} completed={progress.completedModules} isLocked={isLocked} onSelect={selectModule} />

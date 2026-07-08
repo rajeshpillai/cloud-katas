@@ -39,6 +39,10 @@ function internalRouteFor(basePath: string | undefined, href: string): string | 
   const primer = resolved.match(/^docs\/lessons\/primers\/(.+)\.md$/);
   if (primer) return `/primers/${primer[1]}${hash ? `#${hash}` : ""}`;
 
+  // Track docs live directly under docs/lessons/ as `<name>-track.md` (e.g. devops-track.md → /tracks/devops).
+  const track = resolved.match(/^docs\/lessons\/(.+)-track\.md$/);
+  if (track) return `/tracks/${track[1]}${hash ? `#${hash}` : ""}`;
+
   return null;
 }
 
