@@ -938,8 +938,19 @@ button {
 }
 
 .status-version {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
   font-weight: 600;
   color: var(--ink);
+  cursor: pointer;
+  text-decoration: underline dotted;
+  text-underline-offset: 2px;
+}
+
+.status-version:hover {
+  text-decoration-style: solid;
 }
 
 .status-date {
