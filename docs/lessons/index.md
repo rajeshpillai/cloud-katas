@@ -2,6 +2,10 @@
 
 This folder contains one lesson file for each module in the cloud learning path. Each lesson follows the same structure: overview, prerequisites, objectives, core concepts, lab, validation, troubleshooting, cleanup, and further reading.
 
+## Tracks
+
+Prefer to learn by discipline rather than by cloud? The [DevOps Track](devops-track.md) re-sequences the same modules into a build → provision → IaC → CI/CD → GitOps → secure → network → observe → debug path, mapping each phase to its GCP and AWS lessons (and flagging what isn't covered).
+
 ## Fundamentals Primers
 
 New to cloud, networking, or IAM? Start with — or brush up from — the [primers](primers/index.md). Each lesson's **"Background you need"** box links to the relevant one, so you never hit a lab that assumes something you haven't seen.
