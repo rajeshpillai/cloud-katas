@@ -1,29 +1,16 @@
 import { useEffect } from "react";
 import { Github } from "lucide-react";
+import { hardReload, onAppMounted } from "../lib/reload";
 
 const REPO_URL = "https://github.com/rajeshpillai/cloud-katas";
 const COMPANY = "Algorisys Technologies Pvt Ltd";
-const RELOAD_PARAM = "hardreload";
-
-// Reload the page while bypassing the HTTP cache. A plain location.reload() can
-// serve a stale index.html within GitHub Pages' max-age window; a unique query
-// param forces a fresh fetch, and the new content-hashed assets follow from it.
-function hardReload() {
-  const url = new URL(window.location.href);
-  url.searchParams.set(RELOAD_PARAM, Date.now().toString());
-  window.location.replace(url.toString());
-}
 
 export function StatusBar() {
   const year = new Date().getFullYear();
 
-  // After a hard reload, strip the cache-busting param so the address bar stays clean.
+  // The app has mounted: strip any cache-bust param and clear the reload guard.
   useEffect(() => {
-    const url = new URL(window.location.href);
-    if (url.searchParams.has(RELOAD_PARAM)) {
-      url.searchParams.delete(RELOAD_PARAM);
-      window.history.replaceState(null, "", url.toString());
-    }
+    onAppMounted();
   }, []);
 
   return (
