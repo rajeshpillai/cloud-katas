@@ -48,6 +48,9 @@ export function PrimerPage() {
           <button className="theme-toggle" type="button" onClick={() => navigate(-1)} aria-label="Go back" title="Go back">
             <ArrowLeft size={20} />
           </button>
+          <Link className="theme-toggle" to="/" aria-label="Cloud Katas home" title="Cloud Katas home">
+            <BookOpen size={20} />
+          </Link>
           <Link className="github-link" to="/primers/index" aria-label="All primers" title="All primers">
             <BookOpen size={18} />
             <span>All primers</span>

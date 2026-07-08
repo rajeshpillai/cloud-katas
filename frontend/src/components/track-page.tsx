@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, Route as RouteIcon } from "lucide-react";
+import { ArrowLeft, BookOpen, Route as RouteIcon } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { LessonContent } from "./lesson-content";
 import { loadLessonContent } from "../data/lesson-content";
@@ -49,6 +49,9 @@ export function TrackPage() {
           <button className="theme-toggle" type="button" onClick={() => navigate(-1)} aria-label="Go back" title="Go back">
             <ArrowLeft size={20} />
           </button>
+          <Link className="theme-toggle" to="/" aria-label="Cloud Katas home" title="Cloud Katas home">
+            <BookOpen size={20} />
+          </Link>
           <Link className="github-link" to="/" aria-label="All modules" title="All modules">
             <RouteIcon size={18} />
             <span>All modules</span>
