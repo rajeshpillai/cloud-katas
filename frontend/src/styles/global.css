@@ -85,6 +85,23 @@ button {
   margin: 0 auto;
 }
 
+/* Branded header for reader pages so they read as part of Cloud Katas. */
+.reader-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.reader-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .sidebar {
   position: sticky;
   top: 0;

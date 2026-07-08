@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, BookOpen } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { LessonContent } from "./lesson-content";
+import { ReaderTopBar } from "./reader-top-bar";
 import { loadLessonContent } from "../data/lesson-content";
 
 // Keep the primer reader in sync with the saved theme even on a cold/direct load.
@@ -44,18 +45,15 @@ export function PrimerPage() {
   return (
     <main className="app-shell primer-shell">
       <section className="content">
-        <div className="top-actions">
+        <ReaderTopBar>
           <button className="theme-toggle" type="button" onClick={() => navigate(-1)} aria-label="Go back" title="Go back">
             <ArrowLeft size={20} />
           </button>
-          <Link className="theme-toggle" to="/" aria-label="Cloud Katas home" title="Cloud Katas home">
-            <BookOpen size={20} />
-          </Link>
           <Link className="github-link" to="/primers/index" aria-label="All primers" title="All primers">
             <BookOpen size={18} />
             <span>All primers</span>
           </Link>
-        </div>
+        </ReaderTopBar>
 
         <header className="hero">
           <div>
