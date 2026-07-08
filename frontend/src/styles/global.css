@@ -73,6 +73,18 @@ button {
   grid-template-columns: 84px 1fr;
 }
 
+/* Sidebar-less reader pages (primers, tracks): one full-width column with a
+   centered, readable measure instead of the narrow sidebar column. */
+.app-shell.primer-shell {
+  grid-template-columns: 1fr;
+}
+
+.primer-shell .content {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
 .sidebar {
   position: sticky;
   top: 0;
